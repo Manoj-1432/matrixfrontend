@@ -4,76 +4,104 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 const PHONE = '07721570075';
-const WA_URL = `https://wa.me/447721570075`;
+
+const NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/tyres', label: 'Tyres' },
+  { href: '/tpms', label: 'TPMS' },
+  { href: '/areas', label: 'Areas' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
-      {/* top bar */}
-      <div className="bg-gray-900 text-white text-xs py-2 px-4 flex items-center justify-between gap-4 overflow-x-auto whitespace-nowrap">
-        <div className="flex items-center gap-5">
-          <span>📞 24/7 Emergency Mobile Tyre Fitting</span>
-          <span>📍 We Come To You — 30-60 Min Response</span>
-          <span className="hidden sm:inline">⚡ Fast Service</span>
-          <span className="hidden sm:inline">✅ Available Now</span>
-          <span className="hidden md:inline">⭐⭐⭐⭐⭐ Rated by 1,000+ customers</span>
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-20">
+
+        {/* Logo */}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo.png"
+            alt="Matrix Mobile Tyres"
+            width={180}
+            height={72}
+            className="h-16 w-auto object-contain"
+            priority
+          />
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {NAV_LINKS.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-sm font-medium text-gray-600 hover:text-[#1a2a5e] transition-colors"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Desktop CTA */}
+        <div className="hidden lg:flex items-center gap-4">
+          <a href={`tel:${PHONE}`} className="flex items-center gap-2 text-sm font-semibold text-gray-800 hover:text-[#1a2a5e] transition-colors">
+            <svg className="w-4 h-4 text-[#1a2a5e]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            {PHONE}
+          </a>
+          <Link
+            href="/tyres"
+            className="bg-[#1a2a5e] hover:bg-[#0f1a3d] text-white text-sm font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            Book Now
+          </Link>
         </div>
-        <a href={`tel:${PHONE}`}
-          className="bg-green-600 hover:bg-green-500 text-white font-bold px-4 py-1.5 rounded-full text-xs shrink-0 transition-colors">
-          📞 CALL NOW
-        </a>
+
+        {/* Mobile hamburger */}
+        <button
+          className="lg:hidden p-2 rounded-md text-gray-600 hover:bg-gray-50 transition-colors"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            {open
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>}
+          </svg>
+        </button>
       </div>
 
-      {/* main nav */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
-          <Link href="/">
-            <Image src="/logo.png" alt="Matrix Mobile Tyres" width={120} height={48} className="h-10 w-auto object-contain" priority />
-          </Link>
-
-          {/* desktop links */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
-            <Link href="/" className="hover:text-blue-700 transition-colors">Home</Link>
-            <Link href="/tyres" className="hover:text-blue-700 transition-colors">Tyres</Link>
-            <Link href="/tpms" className="hover:text-blue-700 transition-colors">TPMS Service</Link>
-            <Link href="/areas" className="hover:text-blue-700 transition-colors">Areas We Cover</Link>
-            <Link href="/about" className="hover:text-blue-700 transition-colors">About Us</Link>
-            <Link href="/contact" className="hover:text-blue-700 transition-colors">Contact Us</Link>
+      {/* Mobile menu */}
+      {open && (
+        <div className="lg:hidden border-t border-gray-100 bg-white">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1">
+            {NAV_LINKS.map(l => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="py-3 text-sm font-medium text-gray-700 hover:text-[#1a2a5e] border-b border-gray-50 last:border-0 transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+            <div className="pt-4 flex flex-col gap-3">
+              <a href={`tel:${PHONE}`} className="text-center py-3 text-sm font-semibold text-[#1a2a5e] border border-[#1a2a5e] rounded-lg">
+                Call {PHONE}
+              </a>
+              <Link href="/tyres" onClick={() => setOpen(false)}
+                className="text-center py-3 text-sm font-semibold text-white bg-[#1a2a5e] rounded-lg">
+                Book Now
+              </Link>
+            </div>
           </div>
-
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/booking"
-              className="bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
-              Book Fitting
-            </Link>
-          </div>
-
-          {/* mobile hamburger */}
-          <button className="md:hidden p-2" onClick={() => setOpen(!open)} aria-label="Toggle menu">
-            <span className="block w-6 h-0.5 bg-gray-700 mb-1.5" />
-            <span className="block w-6 h-0.5 bg-gray-700 mb-1.5" />
-            <span className="block w-6 h-0.5 bg-gray-700" />
-          </button>
         </div>
-
-        {/* mobile menu */}
-        {open && (
-          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-4 text-sm font-medium">
-            <Link href="/" onClick={() => setOpen(false)}>Home</Link>
-            <Link href="/tyres" onClick={() => setOpen(false)}>Tyres</Link>
-            <Link href="/tpms" onClick={() => setOpen(false)}>TPMS Service</Link>
-            <Link href="/areas" onClick={() => setOpen(false)}>Areas We Cover</Link>
-            <Link href="/about" onClick={() => setOpen(false)}>About Us</Link>
-            <Link href="/contact" onClick={() => setOpen(false)}>Contact Us</Link>
-            <Link href="/booking" onClick={() => setOpen(false)}
-              className="bg-blue-700 text-white text-center py-2 rounded-lg font-semibold">
-              Book Fitting
-            </Link>
-          </div>
-        )}
-      </nav>
-    </>
+      )}
+    </header>
   );
 }
