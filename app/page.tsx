@@ -45,14 +45,6 @@ const STEPS = [
 
 const BRANDS = ['Michelin', 'Continental', 'Bridgestone', 'Goodyear', 'Pirelli', 'Dunlop', 'Hankook', 'Falken', 'Yokohama'];
 
-const REVIEWS = [
-  { name: 'Daniel H.', loc: 'Coventry', text: 'Booked in the morning and had both tyres fitted on my driveway by midday. Absolutely brilliant — will never go to a garage again.' },
-  { name: 'Amelia K.', loc: 'Kenilworth', text: 'Excellent from start to finish. Great communication, friendly fitter and a very fair price. Highly recommend.' },
-  { name: 'Liam B.', loc: 'Leamington Spa', text: 'Far easier than going to a garage. Quality tyres, competitive prices and a very knowledgeable technician.' },
-  { name: 'Sophie W.', loc: 'Rugby', text: 'Had a blowout on the way to work. They came out quickly and sorted everything. A real lifesaver.' },
-  { name: 'Ethan C.', loc: 'Nuneaton', text: 'Dead simple to book. Fitter arrived on time, explained everything clearly. Very professional service.' },
-  { name: 'Olivia T.', loc: 'Warwick', text: 'Used Matrix twice now. Always reliable, always on time, always a fair price. My go-to tyre service.' },
-];
 
 const AREAS = ['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Bedworth', 'Hinckley'];
 
@@ -372,47 +364,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── REVIEWS ─── */}
-      <section className="py-24 px-4 sm:px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-16">
-            <div>
-              <p className="text-blue-600 text-xs font-bold uppercase tracking-[0.18em] mb-3">Customer Reviews</p>
-              <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">What our customers say</h2>
-            </div>
-            <div className="shrink-0 flex items-center gap-4 rounded-2xl border border-amber-100 bg-amber-50 px-6 py-5">
-              <div>
-                <div className="text-amber-400 text-lg leading-none mb-1">★★★★★</div>
-                <p className="text-xs text-amber-700 font-semibold">Verified customer reviews</p>
-              </div>
-              <div className="text-5xl font-black text-amber-400 pl-5 border-l border-amber-200 leading-none">5.0</div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {REVIEWS.map(r => (
-              <div key={r.name}
-                className="group relative bg-slate-50 hover:bg-white rounded-2xl p-7 border border-transparent hover:border-slate-100 hover:shadow-2xl hover:shadow-slate-100 transition-all duration-300">
-                <div className="text-amber-400 text-sm tracking-wider mb-4">★★★★★</div>
-                <p className="text-slate-600 text-sm leading-[1.75] mb-6">&ldquo;{r.text}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-5 border-t border-slate-100/80">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-white text-sm font-black"
-                    style={{ background: 'linear-gradient(135deg, #1e3a8a, #4f46e5)' }}>
-                    {r.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-900 text-sm">{r.name}</p>
-                    <p className="text-slate-400 text-xs">{r.loc}</p>
-                  </div>
-                  <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ─── FAQ ─── */}
       <FaqSection />
