@@ -181,8 +181,8 @@ export default function AccountPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {orders.map(o => (
-                      <tr key={o.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-slate-800">
+                      <tr key={o.id} className="hover:bg-blue-50/40 transition-colors cursor-pointer group" onClick={() => router.push(`/account/orders/${o.id}`)}>
+                        <td className="px-6 py-4 font-bold text-blue-600 group-hover:text-blue-700">
                           {o.order_ref ?? `#ORD-${String(o.id).padStart(4,'0')}`}
                         </td>
                         <td className="px-6 py-4 text-slate-600">

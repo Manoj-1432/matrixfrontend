@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import MobileBookingBar from '@/components/MobileBookingBar';
+import CookieBanner from '@/components/CookieBanner';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -156,6 +157,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-1 pb-[72px] lg:pb-0">{children}</main>
         <MobileBookingBar />
+        <CookieBanner />
 
         <footer style={{ background: '#06101f' }} className="text-gray-300">
           {/* Top gradient bar */}
@@ -232,7 +234,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-600">
               <p>&copy; {new Date().getFullYear()} Matrix Mobile Tyres. All rights reserved.</p>
-              <p>Mobile tyre fitting · Coventry &amp; surrounding areas · 15-mile radius</p>
+              <div className="flex items-center gap-4">
+                <Link href="/privacy" className="hover:text-gray-400 transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-gray-400 transition-colors">Terms &amp; Conditions</Link>
+                <span>Mobile tyre fitting · Coventry</span>
+              </div>
             </div>
           </div>
         </footer>
