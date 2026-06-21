@@ -56,6 +56,72 @@ const REVIEWS = [
 
 const AREAS = ['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Bedworth', 'Hinckley'];
 
+const FAQS = [
+  {
+    q: 'How does mobile tyre fitting work?',
+    a: 'We come to your chosen location — home, work, or roadside — with everything needed to fit your tyres on the spot. No need to visit a garage or wait in a queue.',
+  },
+  {
+    q: 'How do I know which tyres fit my car?',
+    a: 'Simply enter your vehicle registration and we instantly identify the correct tyre size for your car. You can also find the size printed on your existing tyres or in your vehicle handbook.',
+  },
+  {
+    q: 'Can you fit tyres the same day?',
+    a: 'In many cases yes. For same-day or emergency fitting, call or WhatsApp us directly and we\'ll do everything we can to get to you quickly.',
+  },
+  {
+    q: 'What areas do you cover?',
+    a: 'We cover Coventry and all surrounding towns within a 15-mile radius, including Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley.',
+  },
+  {
+    q: 'Do you carry budget, mid-range and premium tyres?',
+    a: 'Yes — we stock a wide range from leading brands like Michelin, Continental and Pirelli down to quality budget options, so you can choose what suits your budget.',
+  },
+  {
+    q: 'What is a TPMS sensor and do I need one?',
+    a: 'TPMS (Tyre Pressure Monitoring System) sensors are fitted to most cars made after 2014. After a tyre change the sensor must be reset or replaced — we carry out this service as standard.',
+  },
+];
+
+function FaqSection() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <section className="py-24 px-4 sm:px-6 bg-white">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-14">
+          <p className="text-blue-600 text-xs font-bold uppercase tracking-[0.18em] mb-3">FAQ</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight mb-4">Frequently asked questions</h2>
+          <p className="text-slate-500 max-w-md mx-auto">Everything you need to know about our mobile tyre fitting service.</p>
+        </div>
+        <div className="flex flex-col gap-3">
+          {FAQS.map((f, i) => (
+            <div key={i}
+              className={`border rounded-2xl overflow-hidden transition-all duration-200 ${open === i ? 'border-blue-200 shadow-md shadow-blue-50' : 'border-slate-100 hover:border-slate-200'}`}>
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left bg-white hover:bg-slate-50 transition-colors"
+              >
+                <span className="font-bold text-slate-900 text-[15px] leading-snug">{f.q}</span>
+                <span className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${open === i ? 'bg-blue-600 text-white rotate-45' : 'bg-slate-100 text-slate-500'}`}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                </span>
+              </button>
+              {open === i && (
+                <div className="px-6 pb-6 bg-white">
+                  <div className="h-px bg-slate-100 mb-4" />
+                  <p className="text-slate-500 text-sm leading-[1.8]">{f.a}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Icon({ d, className = 'w-5 h-5' }: { d: string; className?: string }) {
   return (
     <svg className={className} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
@@ -347,6 +413,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ─── FAQ ─── */}
+      <FaqSection />
 
       {/* ─── AREAS ─── */}
       <section className="py-16 px-4 sm:px-6 bg-slate-50">
