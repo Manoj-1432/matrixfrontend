@@ -3,8 +3,8 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'Matrix Mobile Tyres',
-  description: '24/7 Emergency Mobile Tyre Fitting — We Come To You',
+  title: 'Buy Car Tyres Online | Mobile Tyre Fitting Near You | Matrix Mobile Tyres',
+  description: 'Mobile tyre fitting service in Coventry and surrounding areas. 7 days a week, 8am–8pm. Same-day fitting on selected tyres.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,6 +13,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col">
         <Navbar />
         <main className="flex-1">{children}</main>
+        <footer className="bg-gray-900 text-gray-400 text-sm py-8 px-4 text-center">
+          <p>&copy; {new Date().getFullYear()} Matrix Mobile Tyres. All rights reserved.</p>
+          <p className="mt-1">Serving Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth &amp; Hinckley</p>
+        </footer>
       </body>
     </html>
   );
