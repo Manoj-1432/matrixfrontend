@@ -19,7 +19,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
           {[
             { stat: '1,000+', label: 'Happy Customers' },
-            { stat: '7 Days', label: 'A Week, 8am–8pm' },
+            { stat: '7 Days', label: 'A Week' },
             { stat: '15 Miles', label: 'Radius of Coventry' },
           ].map(s => (
             <div key={s.label} className="bg-blue-700 text-white rounded-2xl p-5 text-center">

@@ -12,7 +12,7 @@ const WA = 'https://wa.me/447721570075';
 
 export const metadata: Metadata = {
   title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry & Surrounding Areas',
-  description: 'Professional mobile tyre fitting in Coventry, Warwick, Leamington Spa, Rugby, Nuneaton and surrounding areas. Available 7 days a week, 8am–8pm. We come to you.',
+  description: 'Professional mobile tyre fitting in Coventry, Warwick, Leamington Spa, Rugby, Nuneaton and surrounding areas. Available 7 days a week. We come to you.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="md:col-span-1">
                 <Image src="/logo.png" alt="Matrix Mobile Tyres" width={160} height={64} className="h-12 w-auto mb-4 brightness-0 invert" />
                 <p className="text-sm text-gray-400 leading-relaxed mb-5">
-                  Coventry&apos;s trusted mobile tyre fitting specialists. We come to you, 7 days a week, 8am–8pm.
+                  Coventry&apos;s trusted mobile tyre fitting specialists. We come to you, 7 days a week.
                 </p>
                 <div className="flex flex-col gap-2.5 text-sm">
                   <a href={`tel:${PHONE}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-medium">

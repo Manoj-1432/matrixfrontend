@@ -33,7 +33,7 @@ export default function ContactPage() {
         <div className="mb-10">
           <p className="text-blue-700 text-sm font-bold uppercase tracking-widest mb-2">Get In Touch</p>
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Contact Us</h1>
-          <p className="text-gray-500">Available 7 days a week, 8am–8pm. For emergencies, call anytime.</p>
+          <p className="text-gray-500">Available 7 days a week. For emergencies, call anytime.</p>
         </div>
 
         <div className="flex flex-col gap-4 mb-6">
@@ -45,7 +45,7 @@ export default function ContactPage() {
             <div>
               <p className="font-bold text-gray-900">Call Us</p>
               <p className="text-sm text-blue-700 font-semibold">{PHONE}</p>
-              <p className="text-xs text-gray-400 mt-0.5">7 days, 8am–8pm</p>
+              <p className="text-xs text-gray-400 mt-0.5">7 days a week</p>
             </div>
             <svg className="w-4 h-4 text-gray-300 ml-auto" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
           </a>
