@@ -67,62 +67,79 @@ export default function Home() {
     <div className="overflow-x-hidden">
 
       {/* ─────────────────── HERO ─────────────────── */}
-      <section className="bg-[#0d1b3e] relative overflow-hidden">
-        {/* subtle diagonal stripe */}
-        <div className="absolute inset-0 opacity-[0.04]"
-          style={{ backgroundImage: 'repeating-linear-gradient(-55deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '24px 24px' }} />
+      <section className="bg-[#0d1b3e] relative overflow-hidden min-h-[620px] flex items-center">
+        <div className="absolute inset-0 opacity-[0.035]"
+          style={{ backgroundImage: 'repeating-linear-gradient(-55deg,#fff 0,#fff 1px,transparent 0,transparent 50%)', backgroundSize: '24px 24px' }} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
-          <div className="max-w-3xl">
-            <p className="text-blue-400 text-sm font-semibold tracking-widest uppercase mb-4">
+        <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 py-20 lg:py-24 grid lg:grid-cols-2 gap-12 items-center">
+          {/* LEFT */}
+          <div>
+            <p className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-5">
               Coventry &amp; Surrounding Areas · 7 Days a Week
             </p>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.05] mb-6">
+            <h1 className="text-5xl sm:text-6xl font-black text-white tracking-tight leading-[1.08] mb-6">
               Professional<br />
-              <span className="text-blue-400">Mobile Tyre</span><br />
+              <span className="text-[#f5d100]">Mobile Tyre</span><br />
               Fitting Service
             </h1>
-            <p className="text-blue-200 text-lg sm:text-xl leading-relaxed mb-10 max-w-xl">
-              We come to you — at home, at work, or by the roadside. Fast, expert tyre fitting at a time and place that suits you.
+            <p className="text-blue-200 text-lg leading-relaxed mb-8 max-w-md">
+              We come to you — at home, at work, or by the roadside. Fast, expert fitting 7 days a week.
             </p>
-
-            {/* REG SEARCH BOX */}
-            <div className="bg-white rounded-2xl p-3 max-w-lg mb-6 shadow-2xl shadow-black/40">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest px-1 mb-2">Enter Your Registration</p>
-              <div className="flex gap-2">
-                <div className="flex-1 flex items-center bg-[#f5d100] rounded-xl px-4 border-2 border-yellow-400 overflow-hidden">
-                  <div className="flex flex-col items-center shrink-0 mr-3 py-0.5">
-                    <div className="bg-[#003399] text-white text-[7px] font-black tracking-[2px] px-1.5 py-0.5 rounded-sm leading-none mb-0.5">GB</div>
-                    <svg className="w-3 h-2 text-yellow-600" viewBox="0 0 12 8"><circle cx="6" cy="4" r="3" fill="currentColor" opacity="0.4"/></svg>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="AB12 CDE"
-                    maxLength={8}
-                    spellCheck={false}
-                    className="w-full bg-transparent outline-none text-gray-900 font-black text-2xl tracking-[0.15em] uppercase placeholder:text-yellow-600/50 py-3"
-                  />
-                </div>
-                <Link href="/tyres"
-                  className="shrink-0 bg-[#1a2a5e] hover:bg-[#0d1628] text-white font-bold text-sm px-6 rounded-xl transition-colors flex items-center">
-                  Find Tyres
-                </Link>
-              </div>
-              <p className="text-[11px] text-gray-400 mt-2 px-1">
-                Or <Link href="/tyres" className="text-[#1a2a5e] font-semibold hover:underline">search by tyre size</Link>
-              </p>
-            </div>
-
-            {/* trust pills */}
-            <div className="flex flex-wrap gap-3">
-              {[
-                '★★★★★  Rated 5.0 by 1,000+ customers',
-                '✓  No hidden charges',
-                '✓  Same day available',
-              ].map(t => (
-                <span key={t} className="bg-white/10 border border-white/20 text-white text-[12px] font-medium px-4 py-2 rounded-full">
+            <div className="flex flex-wrap gap-3 mb-8">
+              {['★★★★★ Rated 5.0','No hidden charges','Same day available'].map(t => (
+                <span key={t} className="flex items-center gap-1.5 bg-white/10 border border-white/15 text-white text-[12px] font-medium px-4 py-2 rounded-full">
                   {t}
                 </span>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/tyres" className="bg-[#f5d100] hover:bg-yellow-300 text-gray-900 font-bold px-7 py-3.5 rounded-xl text-sm transition-colors">
+                Find My Tyres →
+              </Link>
+              <a href={`tel:${PHONE}`} className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-7 py-3.5 rounded-xl text-sm transition-colors">
+                Call {PHONE}
+              </a>
+            </div>
+          </div>
+
+          {/* RIGHT — registration search card */}
+          <div className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
+            <div className="bg-white rounded-2xl shadow-2xl shadow-black/40 overflow-hidden">
+              <div className="bg-[#1a2a5e] px-6 py-4">
+                <p className="text-white font-bold text-base">Get an instant tyre quote</p>
+                <p className="text-blue-300 text-sm mt-0.5">Enter your reg to find the right tyres</p>
+              </div>
+              <div className="p-6">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Vehicle Registration</p>
+                <div className="flex gap-2 mb-4">
+                  <div className="flex-1 flex items-center bg-[#f5d100] rounded-xl px-4 border-2 border-yellow-400">
+                    <div className="flex flex-col items-center shrink-0 mr-3 py-0.5">
+                      <div className="bg-[#003399] text-white text-[7px] font-black tracking-[2px] px-1.5 py-0.5 rounded-sm leading-none mb-0.5">GB</div>
+                    </div>
+                    <input type="text" placeholder="AB12 CDE" maxLength={8} spellCheck={false}
+                      className="w-full bg-transparent outline-none text-gray-900 font-black text-2xl tracking-[0.15em] uppercase placeholder:text-yellow-600/40 py-3" />
+                  </div>
+                </div>
+                <Link href="/tyres"
+                  className="block w-full bg-[#1a2a5e] hover:bg-[#0d1628] text-white font-bold text-sm py-3.5 rounded-xl text-center transition-colors mb-3">
+                  Find Tyres for My Car
+                </Link>
+                <p className="text-center text-xs text-gray-400">
+                  Or <Link href="/tyres" className="text-[#1a2a5e] font-semibold hover:underline">search by tyre size</Link>
+                </p>
+              </div>
+              <div className="border-t border-gray-100 px-6 py-4 flex items-center gap-4 bg-gray-50">
+                <div className="text-amber-400 text-sm">★★★★★</div>
+                <p className="text-xs text-gray-500 font-medium">Trusted by <strong className="text-gray-900">1,000+ drivers</strong> across Coventry &amp; surrounding areas</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 mt-4">
+              {[['7 Days','8am – 8pm'],['15 Miles','Radius'],['30 Min','Response']].map(([v,l]) => (
+                <div key={v} className="bg-white/10 border border-white/10 rounded-xl p-3 text-center">
+                  <p className="text-white font-black text-lg leading-none">{v}</p>
+                  <p className="text-blue-300 text-[10px] mt-1">{l}</p>
+                </div>
               ))}
             </div>
           </div>
