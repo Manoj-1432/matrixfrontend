@@ -290,12 +290,17 @@ export default function Home() {
       </section>
 
       {/* ─── BRANDS ─── */}
-      <section className="py-14 px-4 sm:px-6 bg-slate-50 border-y border-slate-100">
+      <section className="py-14 px-4 sm:px-6 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto">
-          <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-8">Brands We Stock</p>
-          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-4">
+          <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-10">Tyre Brands We Stock</p>
+          <div className="flex flex-wrap justify-center items-center gap-3">
             {BRANDS.map(b => (
-              <span key={b} className="text-slate-300 font-black text-sm tracking-wide hover:text-slate-500 transition-colors cursor-default select-none">{b}</span>
+              <span
+                key={b}
+                className="bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 hover:text-slate-900 font-bold text-sm px-5 py-2.5 rounded-xl transition-all duration-200 cursor-default select-none tracking-wide shadow-sm"
+              >
+                {b}
+              </span>
             ))}
           </div>
         </div>

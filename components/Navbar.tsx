@@ -36,7 +36,7 @@ export default function Navbar() {
               </span>
             ))}
             <span className="hidden lg:flex items-center gap-1 text-yellow-400 font-semibold">
-              ★★★★★ <span className="text-blue-200 font-normal ml-1">Rated 5.0 by 1,000+ customers</span>
+              ★★★★★ <span className="text-blue-200 font-normal ml-1">Rated 5.0</span>
             </span>
           </div>
           <a href={`tel:${PHONE}`}
