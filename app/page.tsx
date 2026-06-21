@@ -114,9 +114,9 @@ function FaqSection() {
   );
 }
 
-function Icon({ d, className = 'w-5 h-5' }: { d: string; className?: string }) {
+function Icon({ d, className = 'w-5 h-5', style }: { d: string; className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
+    <svg className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d={d} />
     </svg>
   );
