@@ -16,7 +16,6 @@ function CheckoutInner() {
   const [config, setConfig]       = useState<CheckoutConfig | null>(null);
   const [coupon, setCoupon]       = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
-  const [checkingCoupon, setCheckingCoupon] = useState(false);
   const [deliveryFee, setDeliveryFee]       = useState<number | null>(null);
   const [calculatingDelivery, setCalcDelivery] = useState(false);
 
@@ -72,18 +71,9 @@ function CheckoutInner() {
     finally { setCalcDelivery(false); }
   }
 
-  async function applyCoupon() {
+  function applyCoupon() {
     if (!coupon.trim()) return;
-    setCheckingCoupon(true); setCouponMsg(null);
-    try {
-      const d = await api.post<{ valid: boolean; message: string; discount?: number }>('/api/public/checkout', {
-        coupon_code: coupon, _check_coupon_only: true,
-      });
-      setCouponMsg({ text: d.message ?? 'Coupon applied', ok: true });
-    } catch (e: unknown) {
-      const err = e as { message?: string };
-      setCouponMsg({ text: err.message ?? 'Invalid coupon', ok: false });
-    } finally { setCheckingCoupon(false); }
+    setCouponMsg({ text: 'Coupon will be applied at checkout', ok: true });
   }
 
   async function submit(e: React.FormEvent) {
@@ -312,9 +302,9 @@ function CheckoutInner() {
                   <input type="text" value={coupon} onChange={e => setCoupon(e.target.value.toUpperCase())}
                     placeholder="SAVE10"
                     className="flex-1 border border-slate-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50" />
-                  <button type="button" onClick={applyCoupon} disabled={checkingCoupon || !coupon.trim()}
+                  <button type="button" onClick={applyCoupon} disabled={!coupon.trim()}
                     className="shrink-0 text-xs font-bold text-blue-600 border border-blue-200 px-3 rounded-xl hover:bg-blue-50 transition-colors disabled:opacity-40">
-                    {checkingCoupon ? '…' : 'Apply'}
+                    Apply
                   </button>
                 </div>
                 {couponMsg && (
