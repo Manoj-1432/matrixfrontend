@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: 'Areas We Cover | Mobile Tyre Fitting Coventry & Surrounding Areas',
@@ -153,6 +154,7 @@ export default function AreasPage() {
           </div>
         </div>
       </section>
+      <ScrollToTop />
     </div>
   );
 }

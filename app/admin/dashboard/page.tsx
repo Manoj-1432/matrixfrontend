@@ -32,8 +32,23 @@ export default function DashboardPage() {
   }, [router]);
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+    <div className="flex flex-col gap-8 animate-pulse">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="h-3 w-20 bg-slate-100 rounded-full" />
+              <div className="w-9 h-9 rounded-xl bg-slate-100" />
+            </div>
+            <div className="h-8 w-24 bg-slate-100 rounded-lg" />
+          </div>
+        ))}
+      </div>
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm h-52" />
+        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm h-52" />
+      </div>
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm h-64" />
     </div>
   );
 
@@ -126,7 +141,7 @@ export default function DashboardPage() {
                 <tr><td colSpan={5} className="px-6 py-10 text-center text-slate-400">No orders yet</td></tr>
               )}
               {recent_orders.map(o => (
-                <tr key={o.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={o.id} onClick={() => router.push(`/admin/orders/${o.id}`)} className="hover:bg-slate-50 transition-colors cursor-pointer">
                   <td className="px-6 py-4 font-bold text-slate-800">{o.order_ref}</td>
                   <td className="px-6 py-4 text-slate-600">{o.customer}</td>
                   <td className="px-6 py-4 text-slate-500">{o.vehicle_registration || o.vehicle || '—'}</td>

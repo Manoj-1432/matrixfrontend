@@ -3,7 +3,7 @@ interface Props { step: 1 | 2 | 3; }
 const STEPS = [
   { n: 1, label: 'Choose Slot' },
   { n: 2, label: 'Your Details' },
-  { n: 3, label: 'Payment' },
+  { n: 3, label: 'Confirmation' },
 ];
 
 export default function BookingProgress({ step }: Props) {

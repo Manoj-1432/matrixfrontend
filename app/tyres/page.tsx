@@ -3,6 +3,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, type TyreResult, type VehicleLookupResult, type SearchOptions } from '@/lib/api';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const PHONE = '07721570075';
 
@@ -342,5 +343,5 @@ function TyresInner() {
 }
 
 export default function TyresPage() {
-  return <Suspense><TyresInner /></Suspense>;
+  return <><Suspense><TyresInner /></Suspense><ScrollToTop /></>;
 }

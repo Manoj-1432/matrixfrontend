@@ -3,6 +3,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api, type Order } from '@/lib/api';
+import BookingProgress from '@/components/BookingProgress';
 
 const PHONE = '07721570075';
 const WA    = 'https://wa.me/447721570075';
@@ -33,8 +34,11 @@ function SuccessInner() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen bg-slate-50 px-4 py-12">
+      <div className="max-w-lg mx-auto mb-6">
+        <BookingProgress step={3} />
+      </div>
+      <div className="w-full max-w-lg mx-auto">
         <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
           {/* Top bar */}
           <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg,#16a34a,#059669)' }} />
