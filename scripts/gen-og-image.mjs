@@ -61,7 +61,7 @@ const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http:/
   <rect x="96" y="308" width="520" height="2" rx="1" fill="rgba(255,255,255,0.1)"/>
 
   <!-- Tagline -->
-  <text x="96" y="360" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="rgba(255,255,255,0.9)">We come to you — home, work or roadside.</text>
+  <text x="96" y="360" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="rgba(255,255,255,0.9)">We come to you, wherever you are.</text>
 
   <!-- Feature pills row -->
   <!-- Pill 1: 7 Days -->
