@@ -71,7 +71,7 @@ export default function OrdersPage() {
               <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">No orders yet</td></tr>
             )}
             {orders.map(o => (
-              <tr key={o.id} className="hover:bg-slate-50 transition-colors">
+              <tr key={o.id} onClick={e => { if ((e.target as HTMLElement).closest('select,button,a')) return; router.push(`/admin/orders/${o.id}`); }} className="hover:bg-slate-50 transition-colors cursor-pointer">
                 <td className="px-6 py-4 font-bold text-slate-800">
                   {o.order_ref ?? `#ORD-${String(o.id).padStart(3, '0')}`}
                 </td>
