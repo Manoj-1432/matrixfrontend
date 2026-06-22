@@ -109,6 +109,8 @@ export type Order = {
   status: string;
   payment_status: string;
   payment_provider?: string;
+  paid_at?: string;
+  customer_comment?: string;
   service_type: string;
   tyre_brand: string;
   tyre_model: string;
