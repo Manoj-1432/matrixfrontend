@@ -77,8 +77,7 @@ export default function AreasPage() {
       {/* Coverage map */}
       <section className="py-12 px-4 bg-white border-b border-slate-100">
         <div className="max-w-5xl mx-auto">
-          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50" style={{ height: '420px', position: 'relative' }}>
-            {/* Zoomed-out embed showing full region */}
+          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: '420px' }}>
             <iframe
               title="Matrix Mobile Tyres coverage area — Coventry and surrounding towns"
               width="100%"
@@ -88,49 +87,10 @@ export default function AreasPage() {
               referrerPolicy="no-referrer-when-downgrade"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d155609.0!2d-1.5199!3d52.4081!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f10.0!3m3!1m2!1s0x4870a06f7e1b1d7f%3A0x93d6d62f8f5ebe0a!2sCoventry%2C%20UK!5e0!3m2!1sen!2suk!4v1699000000000!5m2!1sen!2suk"
             />
-            {/* Town pins overlay */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Coventry — centre */}
-              <div className="absolute flex flex-col items-center" style={{ top: '42%', left: '50%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-[#0d1b3e] text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap">Coventry ★</div>
-                <div className="w-0 h-0 border-l-4 border-r-4 border-t-6 border-l-transparent border-r-transparent" style={{ borderTopColor: '#0d1b3e', borderTopWidth: 6, borderLeftWidth: 4, borderRightWidth: 4 }} />
-              </div>
-              {/* Warwick — south */}
-              <div className="absolute flex flex-col items-center" style={{ top: '57%', left: '48%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Warwick</div>
-              </div>
-              {/* Leamington Spa — south */}
-              <div className="absolute flex flex-col items-center" style={{ top: '62%', left: '52%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Leamington Spa</div>
-              </div>
-              {/* Rugby — east */}
-              <div className="absolute flex flex-col items-center" style={{ top: '38%', left: '68%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Rugby</div>
-              </div>
-              {/* Nuneaton — north */}
-              <div className="absolute flex flex-col items-center" style={{ top: '28%', left: '53%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Nuneaton</div>
-              </div>
-              {/* Bedworth — north-west of Nuneaton */}
-              <div className="absolute flex flex-col items-center" style={{ top: '32%', left: '45%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Bedworth</div>
-              </div>
-              {/* Hinckley — north-east */}
-              <div className="absolute flex flex-col items-center" style={{ top: '22%', left: '65%', transform: 'translate(-50%,-100%)' }}>
-                <div className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow whitespace-nowrap">Hinckley</div>
-              </div>
-            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <span className="w-3 h-3 rounded-sm bg-[#0d1b3e] shrink-0" />
-              Home base (Coventry)
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <span className="w-3 h-3 rounded-sm bg-blue-600 shrink-0" />
-              Coverage areas (~15 mile radius)
-            </div>
-          </div>
+          <p className="text-center text-xs text-slate-400 mt-3">
+            We cover Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth &amp; Hinckley — approximately 15 miles from Coventry city centre
+          </p>
         </div>
       </section>
 
