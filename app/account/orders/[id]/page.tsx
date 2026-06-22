@@ -5,15 +5,15 @@ import Link from 'next/link';
 import { customerApi, type Order } from '@/lib/api';
 
 const STATUS_STYLE: Record<string, string> = {
-  pending:    'bg-amber-50 text-amber-700 border border-amber-200',
-  processing: 'bg-blue-50 text-blue-700 border border-blue-200',
-  completed:  'bg-green-50 text-green-700 border border-green-200',
-  cancelled:  'bg-red-50 text-red-700 border border-red-200',
+  pending:    'bg-amber-50 text-amber-700 border-amber-200',
+  processing: 'bg-blue-50 text-blue-700 border-blue-200',
+  completed:  'bg-green-50 text-green-700 border-green-200',
+  cancelled:  'bg-red-50 text-red-700 border-red-200',
 };
 const PAYMENT_STYLE: Record<string, string> = {
-  paid:    'bg-green-50 text-green-700 border border-green-200',
-  pending: 'bg-amber-50 text-amber-700 border border-amber-200',
-  failed:  'bg-red-50 text-red-700 border border-red-200',
+  paid:    'bg-green-50 text-green-700 border-green-200',
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  failed:  'bg-red-50 text-red-700 border-red-200',
 };
 
 function fmt(dateStr: string | null | undefined) {
@@ -55,7 +55,7 @@ export default function OrderDetailPage() {
   );
 
   const ref = order.order_ref ?? `#ORD-${String(order.id).padStart(4, '0')}`;
-  const total = order.amount ? `£${(Number(order.amount) / 100).toFixed(2)}` : '—';
+  const total = order.amount ? `£${Number(order.amount).toFixed(2)}` : '—';
 
   return (
     <div className="min-h-screen bg-slate-50">

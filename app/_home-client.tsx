@@ -359,7 +359,7 @@ export default function Home() {
       </section>
 
       {/* ─── WHY CHOOSE US ─── */}
-      <section className="py-24 px-4 sm:px-6" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0d1b3e 60%, #0f2352 100%)' }}>
+      <section className="relative py-24 px-4 sm:px-6" style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0d1b3e 60%, #0f2352 100%)' }}>
         <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: 'radial-gradient(ellipse at 80% 50%, rgba(79,70,229,0.15) 0%, transparent 50%)' }} />
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center mb-16">

@@ -181,7 +181,7 @@ export default function AccountPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {orders.map(o => (
-                      <tr key={o.id} className="hover:bg-blue-50/40 transition-colors cursor-pointer group" onClick={() => router.push(`/account/orders/${o.id}`)}>
+                      <tr key={o.id} className="hover:bg-blue-50/40 transition-colors cursor-pointer group" onClick={(e) => { if ((e.target as HTMLElement).closest('a,button')) return; router.push(`/account/orders/${o.id}`); }}>
                         <td className="px-6 py-4 font-bold text-blue-600 group-hover:text-blue-700">
                           {o.order_ref ?? `#ORD-${String(o.id).padStart(4,'0')}`}
                         </td>
