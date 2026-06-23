@@ -29,29 +29,27 @@ export default function ApiSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [editStates, setEditStates] = useState<Record<number, EditState>>({});
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
-  const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
-  const [debugRaw, setDebugRaw] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(null);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
 
-  const showMsg = (text: string, ok = true, persist = false) => {
-    setMsg({ text, ok });
-    if (!persist) setTimeout(() => setMsg(null), 3000);
+  const showNotice = (text: string, ok = true) => {
+    setNotice({ text, ok });
+    setTimeout(() => setNotice(null), 3000);
   };
 
   useEffect(() => {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
     adminApi.get<{ settings: ApiSetting[]; api_settings?: ApiSetting[] }>('/api/admin/api-settings')
       .then(res => {
-        setDebugRaw(JSON.stringify(res, null, 2));
         const s = res.settings ?? res.api_settings ?? [];
         setSettings(s);
         const states: Record<number, EditState> = {};
-        s.forEach(x => { states[x.id] = { value: x.value, saving: false, toggling: false }; });
+        s.forEach(x => { states[x.id] = { value: x.value ?? '', saving: false, toggling: false }; });
         setEditStates(states);
       })
       .catch((err: unknown) => {
-        const msg = err instanceof Error ? err.message : String(err);
-        setDebugRaw('ERROR: ' + msg);
-        showMsg('Failed to load: ' + msg, false, true);
+        const detail = err instanceof Error ? err.message : String(err);
+        setErrorDetail(detail);
       })
       .finally(() => setLoading(false));
   }, [router]);
@@ -71,9 +69,9 @@ export default function ApiSettingsPage() {
         is_enabled: setting.is_enabled,
       });
       setSettings(prev => prev.map(s => s.id === setting.id ? { ...s, ...updated } : s));
-      showMsg(`${formatKeyName(setting.key_name)} saved`);
+      showNotice(`${formatKeyName(setting.key_name)} saved`);
     } catch (e: unknown) {
-      showMsg(e instanceof Error ? e.message : 'Save failed', false);
+      showNotice(e instanceof Error ? e.message : 'Save failed', false);
     } finally {
       setEditStates(prev => ({ ...prev, [setting.id]: { ...prev[setting.id], saving: false } }));
     }
@@ -85,7 +83,7 @@ export default function ApiSettingsPage() {
       const updated = await adminApi.patch<ApiSetting>(`/api/admin/api-settings/${setting.id}/toggle`);
       setSettings(prev => prev.map(s => s.id === setting.id ? { ...s, ...updated } : s));
     } catch {
-      showMsg('Toggle failed', false);
+      showNotice('Toggle failed', false);
     } finally {
       setEditStates(prev => ({ ...prev, [setting.id]: { ...prev[setting.id], toggling: false } }));
     }
@@ -99,9 +97,15 @@ export default function ApiSettingsPage() {
 
   return (
     <div className="flex flex-col gap-4 max-w-3xl">
-      {msg && (
-        <div className={`px-4 py-3 rounded-xl text-sm font-medium border ${msg.ok ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
-          {msg.text}
+      {notice && (
+        <div className={`px-4 py-3 rounded-xl text-sm font-medium border ${notice.ok ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+          {notice.text}
+        </div>
+      )}
+
+      {errorDetail && (
+        <div className="px-4 py-3 rounded-xl text-sm font-medium border bg-red-50 text-red-700 border-red-200">
+          Failed to load: {errorDetail}
         </div>
       )}
 
@@ -115,14 +119,7 @@ export default function ApiSettingsPage() {
         </div>
       </div>
 
-      {debugRaw !== null && (
-        <details className="bg-slate-900 rounded-xl p-4 text-xs text-green-300 font-mono overflow-auto max-h-64">
-          <summary className="cursor-pointer text-slate-400 mb-2">Debug: raw API response (click to expand)</summary>
-          <pre>{debugRaw}</pre>
-        </details>
-      )}
-
-      {settings.length === 0 && (
+      {settings.length === 0 && !errorDetail && (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center text-slate-400">
           No API settings configured
         </div>
