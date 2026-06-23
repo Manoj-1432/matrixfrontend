@@ -30,6 +30,7 @@ export default function ApiSettingsPage() {
   const [editStates, setEditStates] = useState<Record<number, EditState>>({});
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [debugRaw, setDebugRaw] = useState<string | null>(null);
 
   const showMsg = (text: string, ok = true) => {
     setMsg({ text, ok });
@@ -40,9 +41,8 @@ export default function ApiSettingsPage() {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
     adminApi.get<{ settings: ApiSetting[]; api_settings?: ApiSetting[] }>('/api/admin/api-settings')
       .then(res => {
-        console.log('[api-settings] raw response:', res);
+        setDebugRaw(JSON.stringify(res, null, 2));
         const s = res.settings ?? res.api_settings ?? [];
-        console.log('[api-settings] settings array:', s);
         setSettings(s);
         const states: Record<number, EditState> = {};
         s.forEach(x => { states[x.id] = { value: x.value, saving: false, toggling: false }; });
@@ -110,6 +110,13 @@ export default function ApiSettingsPage() {
           <p className="text-xs text-amber-700 mt-0.5">Values are masked. Click the eye icon to reveal. Changes are saved per-row.</p>
         </div>
       </div>
+
+      {debugRaw !== null && (
+        <details className="bg-slate-900 rounded-xl p-4 text-xs text-green-300 font-mono overflow-auto max-h-64">
+          <summary className="cursor-pointer text-slate-400 mb-2">Debug: raw API response (click to expand)</summary>
+          <pre>{debugRaw}</pre>
+        </details>
+      )}
 
       {settings.length === 0 && (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm px-6 py-12 text-center text-slate-400">
