@@ -40,7 +40,9 @@ export default function ApiSettingsPage() {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
     adminApi.get<{ settings: ApiSetting[]; api_settings?: ApiSetting[] }>('/api/admin/api-settings')
       .then(res => {
+        console.log('[api-settings] raw response:', res);
         const s = res.settings ?? res.api_settings ?? [];
+        console.log('[api-settings] settings array:', s);
         setSettings(s);
         const states: Record<number, EditState> = {};
         s.forEach(x => { states[x.id] = { value: x.value, saving: false, toggling: false }; });
