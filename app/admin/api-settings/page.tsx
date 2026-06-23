@@ -32,9 +32,9 @@ export default function ApiSettingsPage() {
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [debugRaw, setDebugRaw] = useState<string | null>(null);
 
-  const showMsg = (text: string, ok = true) => {
+  const showMsg = (text: string, ok = true, persist = false) => {
     setMsg({ text, ok });
-    setTimeout(() => setMsg(null), 3000);
+    if (!persist) setTimeout(() => setMsg(null), 3000);
   };
 
   useEffect(() => {
@@ -48,7 +48,11 @@ export default function ApiSettingsPage() {
         s.forEach(x => { states[x.id] = { value: x.value, saving: false, toggling: false }; });
         setEditStates(states);
       })
-      .catch(() => showMsg('Failed to load', false))
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        setDebugRaw('ERROR: ' + msg);
+        showMsg('Failed to load: ' + msg, false, true);
+      })
       .finally(() => setLoading(false));
   }, [router]);
 
