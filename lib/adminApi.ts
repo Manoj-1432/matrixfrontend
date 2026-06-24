@@ -18,7 +18,10 @@ async function request<T>(path: string, options?: RequestInit, isFormData = fals
     }
     throw new Error('Unauthenticated');
   }
-  if (!res.ok) throw new Error(json.message ?? 'Request failed');
+  if (!res.ok) {
+    const errors = json.errors ? ' — ' + Object.entries(json.errors).map(([k, v]) => `${k}: ${(v as string[]).join(', ')}`).join(' | ') : '';
+    throw new Error((json.message ?? 'Request failed') + errors);
+  }
   return json.data as T;
 }
 
