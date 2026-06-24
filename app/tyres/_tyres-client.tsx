@@ -11,8 +11,11 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 function resolveImageUrl(url?: string | null): string | null {
   if (!url) return null;
-  if (url.startsWith('http')) return url;
-  return `${API_BASE}${url}`;
+  // If it's already a full URL from a different host, use it directly
+  if (url.startsWith('http') && !url.includes('localhost')) return url;
+  // Strip any wrong origin and re-attach the correct API base
+  const path = url.startsWith('http') ? new URL(url).pathname : url;
+  return `${API_BASE}${path}`;
 }
 
 function getBrandName(t: TyreResult) {
