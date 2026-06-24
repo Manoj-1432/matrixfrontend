@@ -133,13 +133,16 @@ export default function SlotsPage() {
     if (bulkForm.days.length === 0) { showMsg('Select at least one day', false); return; }
     setBulkSaving(true);
     try {
-      await adminApi.post('/api/admin/slots/bulk-generate', {
-        days: bulkForm.days,
-        start_time: bulkForm.start_time,
-        end_time: bulkForm.end_time,
-        interval_minutes: Number(bulkForm.interval_minutes),
-        max_bookings: Number(bulkForm.max_bookings),
-      });
+      // Backend handles one day at a time — call once per selected day
+      await Promise.all(bulkForm.days.map(day =>
+        adminApi.post('/api/admin/slots/bulk-generate', {
+          day,
+          start_time: bulkForm.start_time,
+          end_time: bulkForm.end_time,
+          duration: Number(bulkForm.interval_minutes),
+          max_bookings: Number(bulkForm.max_bookings),
+        })
+      ));
       showMsg('Slots generated successfully');
       setShowBulk(false);
       setBulkForm({ ...BLANK_BULK });
