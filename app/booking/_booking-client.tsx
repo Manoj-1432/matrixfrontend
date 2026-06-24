@@ -85,6 +85,13 @@ function BookingInner() {
     ? allSlots.filter(s => s.day === selectedDayName)
     : [];
 
+  function isTooSoon(dateIso: string, startTime: string): boolean {
+    const [h, m] = startTime.split(':').map(Number);
+    const slotDate = new Date(dateIso + 'T00:00:00');
+    slotDate.setHours(h, m, 0, 0);
+    return slotDate.getTime() - Date.now() < 24 * 60 * 60 * 1000;
+  }
+
   const displayBrand = tyre ? (tyre.brand_name ?? tyre.brand ?? tyreBrand) : tyreBrand;
   const displayModel = tyre?.model ?? tyreModel;
   const displaySize  = tyre ? (tyre.size_label ?? tyre.size ?? tyreSize) : tyreSize;
@@ -134,9 +141,13 @@ function BookingInner() {
               ) : dates.map(d => {
                 const iso  = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
                 const isSel = iso === selectedDate;
+                // Disable date if the end of the day (23:59) is within 24 hours
+                const dayEnd = new Date(iso + 'T23:59:00');
+                const dateDisabled = dayEnd.getTime() - Date.now() < 24 * 60 * 60 * 1000;
                 return (
-                  <button key={iso} onClick={() => pickDate(iso)}
+                  <button key={iso} onClick={() => !dateDisabled && pickDate(iso)} disabled={dateDisabled}
                     className={`flex flex-col items-center justify-center py-2.5 px-1 rounded-xl border text-xs font-semibold transition-all duration-150 ${
+                      dateDisabled ? 'opacity-30 cursor-not-allowed bg-slate-50 border-slate-100 text-slate-400' :
                       isSel ? 'bg-[#0d1b3e] border-[#0d1b3e] text-white shadow-md' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-400 hover:bg-slate-50'
                     }`}>
                     <span className={`text-[0.6rem] font-bold tracking-wide ${isSel ? 'text-blue-300' : 'text-slate-400'}`}>
@@ -196,11 +207,13 @@ function BookingInner() {
             <div className="grid grid-cols-2 gap-2">
               {!loadingSlots && daySlots.map(slot => {
                 const booked = occupiedKeys.has(`${slot.id}_${selectedDate}`);
+                const tooSoon = selectedDate ? isTooSoon(selectedDate, slot.start_time) : false;
+                const disabled = booked || tooSoon;
                 const isSel  = selectedSlot?.id === slot.id;
                 return (
-                  <button key={slot.id} disabled={booked} onClick={() => setSelSlot(slot)}
+                  <button key={slot.id} disabled={disabled} onClick={() => setSelSlot(slot)}
                     className={`flex flex-col items-center py-3 px-2 rounded-xl border text-sm font-semibold transition-all ${
-                      booked  ? 'opacity-30 cursor-not-allowed bg-slate-50 border-slate-200' :
+                      disabled ? 'opacity-30 cursor-not-allowed bg-slate-50 border-slate-200' :
                       isSel   ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-md' :
                       'bg-white border-slate-200 hover:border-slate-400 text-slate-700 cursor-pointer'
                     }`}>
