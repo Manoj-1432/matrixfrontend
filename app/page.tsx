@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import HomeClient from './_home-client';
+import GoogleReviews from '@/components/GoogleReviews';
 
 export const metadata: Metadata = {
   title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry — Home, Work or Roadside',
@@ -92,6 +93,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <HomeClient />
+      <GoogleReviews />
     </>
   );
 }
