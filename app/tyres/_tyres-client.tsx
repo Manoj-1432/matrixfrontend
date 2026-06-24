@@ -196,6 +196,7 @@ function TyresInner() {
   const SELECT = 'w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer';
 
   return (
+    <>
     <div className="min-h-screen bg-slate-50">
       {/* Hero bar */}
       <div className="bg-[#0d1b3e] text-white py-12 px-4">
@@ -474,6 +475,7 @@ function TyresInner() {
         </div>
       </div>
     )}
+    </>
   );
 }
 
