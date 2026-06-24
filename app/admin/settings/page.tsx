@@ -174,9 +174,9 @@ export default function SettingsPage() {
         </div>
 
         <div className="p-4 bg-slate-50 rounded-xl flex flex-col gap-3">
-          <Toggle value={settings.tpms_charge_enabled} onChange={v => upd('tpms_charge_enabled', v)} label="Enable TPMS Charge" />
+          <Toggle value={settings.tpms_charge_enabled} onChange={v => upd('tpms_charge_enabled', v)} label="Enable TPMS Diagnostic" />
           {settings.tpms_charge_enabled && (
-            <Field label="TPMS Charge (£)">
+            <Field label="TPMS Diagnostic Charge (£)">
               <input type="number" min="0" step="0.01" value={settings.tpms_charge}
                 onChange={e => upd('tpms_charge', e.target.value)} className={INPUT} />
             </Field>

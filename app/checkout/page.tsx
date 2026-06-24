@@ -107,13 +107,16 @@ function CheckoutInner() {
     } finally { setSubmitting(false); }
   }
 
-  const unitPrice  = Number(form.tyre_unit_price) || 0;
-  const qty        = Number(form.tyre_quantity) || 1;
-  const subtotal   = unitPrice * qty;
-  const vatAmount  = config?.vat_enabled ? subtotal * ((config.vat_percentage ?? 0) / 100) : 0;
-  const tpmsCharge = config?.tpms_charge_enabled ? (config.tpms_charge ?? 0) : 0;
-  const delivery   = deliveryFee ?? 0;
-  const total      = subtotal + vatAmount + tpmsCharge + delivery;
+  const [tpmsSelected, setTpmsSelected] = useState(false);
+
+  const unitPrice   = Number(form.tyre_unit_price) || 0;
+  const qty         = Number(form.tyre_quantity) || 1;
+  const subtotal    = unitPrice * qty;
+  const vatAmount   = config?.vat_enabled ? subtotal * ((config.vat_percentage ?? 0) / 100) : 0;
+  const tpmsRate    = config?.tpms_charge_enabled ? (config.tpms_charge ?? 0) : 0;
+  const tpmsCharge  = tpmsSelected ? tpmsRate : 0;
+  const delivery    = deliveryFee ?? 0;
+  const total       = subtotal + vatAmount + tpmsCharge + delivery;
 
   const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all placeholder:text-slate-300';
 
@@ -270,10 +273,14 @@ function CheckoutInner() {
                     <span className="font-semibold text-slate-800">£{vatAmount.toFixed(2)}</span>
                   </div>
                 )}
-                {tpmsCharge > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">TPMS Service</span>
-                    <span className="font-semibold text-slate-800">£{tpmsCharge.toFixed(2)}</span>
+                {tpmsRate > 0 && (
+                  <div className="flex items-center justify-between py-1">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <input type="checkbox" checked={tpmsSelected} onChange={e => setTpmsSelected(e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-300 accent-blue-600 cursor-pointer" />
+                      <span className="text-slate-600 text-sm">TPMS Diagnostic <span className="text-xs text-slate-400">(optional)</span></span>
+                    </label>
+                    <span className="font-semibold text-slate-800">£{tpmsRate.toFixed(2)}</span>
                   </div>
                 )}
                 {deliveryFee !== null && (

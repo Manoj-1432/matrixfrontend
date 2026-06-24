@@ -194,7 +194,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="flex flex-col gap-2.5 text-sm text-gray-500">
                   {[
                     { href: '/tyres', label: 'Mobile Tyre Fitting' },
-                    { href: '/tpms', label: 'TPMS Service' },
+                    { href: '/tpms', label: 'TPMS Diagnostic' },
                     { href: '/tyres', label: 'Book a Fitting' },
                     { href: '/contact', label: 'Emergency Callout' },
                     { href: '/contact', label: 'Same Day Fitting' },

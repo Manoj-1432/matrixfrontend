@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api, type TyreResult, type VehicleLookupResult, type SearchOptions } from '@/lib/api';
 import ScrollToTop from '@/components/ScrollToTop';
+import { addToCart, getCart, updateQty, removeFromCart, clearCart, cartTotal, type CartItem } from '@/lib/cart';
 
 const PHONE = '07721570075';
 
@@ -28,7 +29,7 @@ function getPrice(t: TyreResult) {
   return Number(t.price).toFixed(2);
 }
 
-function TyreCard({ t, onBook }: { t: TyreResult; onBook: (t: TyreResult) => void }) {
+function TyreCard({ t, onAdd, inCart }: { t: TyreResult; onAdd: (t: TyreResult) => void; inCart: boolean }) {
   const imgSrc = resolveImageUrl(t.image_url);
   return (
     <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-200">
@@ -73,10 +74,10 @@ function TyreCard({ t, onBook }: { t: TyreResult; onBook: (t: TyreResult) => voi
           <span className="text-xs text-slate-400 ml-1">per tyre</span>
         </div>
         <button
-          onClick={() => onBook(t)}
-          className="text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-          style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
-          Book Fitting
+          onClick={() => onAdd(t)}
+          className={`text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${inCart ? 'bg-green-600 text-white' : 'text-white'}`}
+          style={inCart ? {} : { background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
+          {inCart ? '✓ Added' : 'Add to Cart'}
         </button>
       </div>
       </div>
@@ -95,6 +96,8 @@ function TyresInner() {
   const [ratio, setRatio] = useState('');
   const [rim, setRim] = useState('');
   const [speed, setSpeed] = useState('');
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCart, setShowCart] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -167,8 +170,27 @@ function TyresInner() {
     } finally { setLoading(false); }
   }
 
-  function handleBook(t: TyreResult) {
-    router.push(`/booking?tyre_id=${t.id}&tyre_brand=${encodeURIComponent(getBrandName(t))}&tyre_model=${encodeURIComponent(t.model)}&tyre_size=${encodeURIComponent(getSizeLabel(t))}&tyre_price=${getPrice(t)}`);
+  useEffect(() => { setCart(getCart()); }, []);
+
+  function handleAdd(t: TyreResult) {
+    const updated = addToCart(t, 1);
+    setCart([...updated]);
+    setShowCart(true);
+  }
+
+  function handleCartQty(id: number, qty: number) {
+    setCart([...updateQty(id, qty)]);
+  }
+
+  function handleCartRemove(id: number) {
+    setCart([...removeFromCart(id)]);
+  }
+
+  function handleBookCart() {
+    if (cart.length === 0) return;
+    const first = cart[0];
+    // Store full cart in localStorage for checkout to read
+    router.push(`/booking?tyre_id=${first.tyre.id}&tyre_brand=${encodeURIComponent(getBrandName(first.tyre))}&tyre_model=${encodeURIComponent(first.tyre.model)}&tyre_size=${encodeURIComponent(getSizeLabel(first.tyre))}&tyre_price=${getPrice(first.tyre)}&qty=${first.qty}&cart=1`);
   }
 
   const SELECT = 'w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer';
@@ -364,7 +386,7 @@ function TyresInner() {
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {tyres.map(t => <TyreCard key={t.id} t={t} onBook={handleBook} />)}
+                {tyres.map(t => <TyreCard key={t.id} t={t} onAdd={handleAdd} inCart={cart.some(c => c.tyre.id === t.id)} />)}
               </div>
             )}
           </>
@@ -382,6 +404,76 @@ function TyresInner() {
         )}
       </div>
     </div>
+
+    {/* Floating cart button */}
+    {cart.length > 0 && !showCart && (
+      <button onClick={() => setShowCart(true)}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-3 text-white font-bold px-5 py-3.5 rounded-2xl shadow-2xl transition-all hover:-translate-y-1"
+        style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
+        <span className="relative">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+          </svg>
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+            {cart.reduce((s, i) => s + i.qty, 0)}
+          </span>
+        </span>
+        View Cart — £{cartTotal(cart).toFixed(2)}
+      </button>
+    )}
+
+    {/* Cart drawer */}
+    {showCart && (
+      <div className="fixed inset-0 z-50 flex justify-end">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowCart(false)} />
+        <div className="relative bg-white w-full max-w-sm h-full flex flex-col shadow-2xl overflow-y-auto">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+            <h2 className="font-black text-slate-900 text-lg">Your Cart</h2>
+            <button onClick={() => setShowCart(false)} className="text-slate-400 hover:text-slate-700 text-xl font-bold">✕</button>
+          </div>
+
+          {cart.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">Cart is empty</div>
+          ) : (
+            <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+              {cart.map(item => (
+                <div key={item.tyre.id} className="px-5 py-4 flex gap-3">
+                  {resolveImageUrl(item.tyre.image_url) && (
+                    <img src={resolveImageUrl(item.tyre.image_url)!} alt={item.tyre.model} className="w-16 h-16 object-cover rounded-xl border border-slate-100 flex-shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-900 text-sm truncate">{getBrandName(item.tyre)} {item.tyre.model}</p>
+                    <p className="text-xs text-slate-500 font-mono">{getSizeLabel(item.tyre)}</p>
+                    <p className="text-sm font-black text-slate-900 mt-1">£{(Number(item.tyre.price) * item.qty).toFixed(2)}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button onClick={() => handleCartQty(item.tyre.id, item.qty - 1)} className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-bold text-sm flex items-center justify-center hover:bg-slate-200">−</button>
+                      <span className="text-sm font-bold w-5 text-center">{item.qty}</span>
+                      <button onClick={() => handleCartQty(item.tyre.id, item.qty + 1)} className="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 font-bold text-sm flex items-center justify-center hover:bg-slate-200">+</button>
+                      <button onClick={() => handleCartRemove(item.tyre.id)} className="ml-2 text-xs text-red-400 hover:text-red-600 font-semibold">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="border-t border-slate-100 px-5 py-4 space-y-3">
+            <div className="flex justify-between font-black text-slate-900 text-base">
+              <span>Total</span>
+              <span>£{cartTotal(cart).toFixed(2)}</span>
+            </div>
+            <button onClick={handleBookCart}
+              className="w-full text-white font-bold py-3.5 rounded-xl text-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+              style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
+              Book Fitting →
+            </button>
+            <button onClick={() => { clearCart(); setCart([]); }} className="w-full text-slate-500 text-xs font-semibold hover:text-red-500 py-1">
+              Clear cart
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   );
 }
 
