@@ -64,6 +64,7 @@ export type TyreResult = {
   description?: string;
   fuel_efficiency?: { rating: string } | null;
   speed_rating?: { rating: string } | null;
+  image_url?: string | null;
 };
 
 export type VehicleLookupResult = {

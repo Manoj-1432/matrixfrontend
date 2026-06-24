@@ -7,6 +7,14 @@ import ScrollToTop from '@/components/ScrollToTop';
 
 const PHONE = '07721570075';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+function resolveImageUrl(url?: string | null): string | null {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  return `${API_BASE}${url}`;
+}
+
 function getBrandName(t: TyreResult) {
   return t.brand_name ?? t.brand ?? '—';
 }
@@ -18,8 +26,15 @@ function getPrice(t: TyreResult) {
 }
 
 function TyreCard({ t, onBook }: { t: TyreResult; onBook: (t: TyreResult) => void }) {
+  const imgSrc = resolveImageUrl(t.image_url);
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl p-5 flex flex-col gap-4 hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-200">
+    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-200">
+      {imgSrc && (
+        <div className="w-full h-40 bg-slate-50 overflow-hidden">
+          <img src={imgSrc} alt={t.model} className="w-full h-full object-cover" />
+        </div>
+      )}
+      <div className="p-5 flex flex-col gap-4 flex-1">
       <div>
         <div className="flex items-start justify-between gap-2 mb-1">
           <span className="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
@@ -60,6 +75,7 @@ function TyreCard({ t, onBook }: { t: TyreResult; onBook: (t: TyreResult) => voi
           style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
           Book Fitting
         </button>
+      </div>
       </div>
     </div>
   );
