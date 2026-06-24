@@ -34,7 +34,8 @@ function BookingInner() {
   const [qty, setQty]               = useState(1);
 
   useEffect(() => {
-    const t = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const t = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     setToday(t);
     Promise.all([
       api.get<{ slots: Slot[] }>('/api/public/slots'),
@@ -130,7 +131,7 @@ function BookingInner() {
                   <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : dates.map(d => {
-                const iso  = d.toISOString().split('T')[0];
+                const iso  = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
                 const isSel = iso === selectedDate;
                 return (
                   <button key={iso} onClick={() => pickDate(iso)}
