@@ -80,8 +80,9 @@ function BookingInner() {
     router.push(`/checkout?${p}`);
   }
 
+  const selectedDayName = selectedDate ? DAY_NAMES[new Date(selectedDate + 'T00:00:00').getDay()] : null;
   const daySlots = selectedDate
-    ? allSlots.filter(s => s.day === DAY_NAMES[new Date(selectedDate + 'T00:00:00').getDay()])
+    ? allSlots.filter(s => s.day === selectedDayName)
     : [];
 
   const displayBrand = tyre ? (tyre.brand_name ?? tyre.brand ?? tyreBrand) : tyreBrand;
@@ -164,11 +165,14 @@ function BookingInner() {
 
           {/* Slot picker */}
           <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
               {selectedDate
                 ? `Available Slots — ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}`
                 : 'Available Slots'}
             </p>
+            {selectedDayName && (
+              <p className="text-[10px] text-slate-300 mb-3">filtering day: {selectedDayName} | total slots loaded: {allSlots.length} | days in DB: {[...new Set(allSlots.map(s=>s.day))].join(', ')}</p>
+            )}
 
             {!selectedDate && (
               <div className="flex flex-col items-center justify-center py-10 text-center">
