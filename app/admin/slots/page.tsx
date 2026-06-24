@@ -27,8 +27,9 @@ type BulkForm = {
   max_bookings: string;
 };
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const BLANK_FORM: SlotForm = { day: 'Mon', start_time: '09:00', end_time: '10:00', max_bookings: '4' };
+const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const DAY_LABELS: Record<string, string> = { monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun' };
+const BLANK_FORM: SlotForm = { day: 'monday', start_time: '09:00', end_time: '10:00', max_bookings: '4' };
 const BLANK_BULK: BulkForm = { days: [], start_time: '08:00', end_time: '18:00', interval_minutes: '60', max_bookings: '4' };
 
 const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white';
@@ -222,7 +223,7 @@ export default function SlotsPage() {
               {DAYS.flatMap(day =>
                 grouped[day].map(s => (
                   <tr key={s.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-slate-800">{s.day}</td>
+                    <td className="px-6 py-4 font-bold text-slate-800">{DAY_LABELS[s.day] ?? s.day}</td>
                     <td className="px-6 py-4 font-mono text-slate-600">{s.start_time}</td>
                     <td className="px-6 py-4 font-mono text-slate-600">{s.end_time}</td>
                     <td className="px-6 py-4 text-center text-slate-600">{s.max_bookings}</td>
@@ -255,7 +256,7 @@ export default function SlotsPage() {
             <div className="flex flex-col gap-4">
               <Field label="Day *">
                 <select value={form.day} onChange={e => setForm({ ...form, day: e.target.value })} className={INPUT}>
-                  {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
+                  {DAYS.map(d => <option key={d} value={d}>{DAY_LABELS[d]}</option>)}
                 </select>
               </Field>
               <Field label="Start Time *">
@@ -291,7 +292,7 @@ export default function SlotsPage() {
                   {DAYS.map(d => (
                     <button key={d} onClick={() => toggleBulkDay(d)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${bulkForm.days.includes(d) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}>
-                      {d}
+                      {DAY_LABELS[d]}
                     </button>
                   ))}
                 </div>
