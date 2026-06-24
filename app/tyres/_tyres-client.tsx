@@ -109,6 +109,30 @@ function TyresInner() {
       .catch(() => null);
   }, []);
 
+  useEffect(() => {
+    const regParam = params.get('reg');
+    if (regParam) {
+      const v = regParam.trim().toUpperCase();
+      setReg(v);
+      setTab('reg');
+      // Auto-trigger search after options load (slight delay to ensure component is ready)
+      const t = setTimeout(async () => {
+        setLoading(true); setError(null);
+        try {
+          const data = await api.post<VehicleLookupResult>('/api/vehicle/lookup', { registration_number: v });
+          setVehicle(data.vehicle ?? null);
+          setTyres(data.tyres ?? []);
+          setLikelySizes(data.tyre?.likely_sizes ?? []);
+          setTyreNote(data.tyre?.notes?.[0] ?? null);
+        } catch (err: unknown) {
+          setError(err instanceof Error ? err.message : 'Could not look up vehicle.');
+        } finally { setLoading(false); }
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function searchByReg() {
     const v = reg.trim().replace(/\s+/g, '').toUpperCase();
     if (!v) return;

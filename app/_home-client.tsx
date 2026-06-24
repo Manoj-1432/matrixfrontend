@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const PHONE = '07721570075';
 const WA = 'https://wa.me/447721570075';
@@ -123,10 +124,18 @@ function FaqSection() {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const [heroReg, setHeroReg] = useState('');
   const [width, setWidth] = useState('');
   const [profile, setProfile] = useState('');
   const [rim, setRim] = useState('');
   const [speed, setSpeed] = useState('');
+
+  function handleHeroSearch() {
+    const v = heroReg.trim().replace(/\s+/g, '').toUpperCase();
+    if (!v) return;
+    router.push(`/tyres?reg=${encodeURIComponent(v)}`);
+  }
 
   return (
     <>
@@ -211,16 +220,19 @@ export default function Home() {
                     maxLength={8}
                     spellCheck={false}
                     autoCapitalize="characters"
+                    value={heroReg}
+                    onChange={e => setHeroReg(e.target.value.toUpperCase())}
+                    onKeyDown={e => e.key === 'Enter' && handleHeroSearch()}
                     className="flex-1 bg-[#f5d100] outline-none font-black text-2xl tracking-[0.2em] uppercase text-slate-900 placeholder:text-yellow-600/35 px-3 py-4 min-w-0"
                   />
                 </div>
 
-                <Link href="/tyres"
+                <button onClick={handleHeroSearch}
                   className="flex items-center justify-center gap-2 w-full text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-200 mb-5 hover:-translate-y-0.5 hover:shadow-lg"
                   style={{ background: 'linear-gradient(135deg, #1e40af, #4f46e5)', boxShadow: '0 4px 16px rgba(79,70,229,0.3)' }}>
                   Find Tyres for My Car
                   <Icon d="M17 8l4 4m0 0l-4 4m4-4H3" className="w-4 h-4" />
-                </Link>
+                </button>
 
                 {/* Divider */}
                 <div className="flex items-center gap-3 mb-5">
