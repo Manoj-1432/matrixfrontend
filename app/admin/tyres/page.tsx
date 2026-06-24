@@ -41,11 +41,16 @@ const INPUT = "w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm out
 
 function TyreModal({
   title, form, setForm, brands, sizes, seasons, tyreTypes, onSave, onClose, saving,
+  imageFile, setImageFile, currentImageUrl,
 }: {
   title: string; form: FormData; setForm: (f: FormData) => void;
   brands: Attr[]; sizes: Attr[]; seasons: Attr[]; tyreTypes: Attr[];
   onSave: () => void; onClose: () => void; saving: boolean;
+  imageFile: File | null; setImageFile: (f: File | null) => void;
+  currentImageUrl?: string;
 }) {
+  const preview = imageFile ? URL.createObjectURL(imageFile) : currentImageUrl ?? null;
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-7 my-4">
@@ -102,6 +107,25 @@ function TyreModal({
             </Field>
           </div>
           <div className="col-span-2">
+            <Field label="Tyre Image">
+              <div className="flex items-center gap-4">
+                {preview && (
+                  <img src={preview} alt="preview" className="w-16 h-16 object-cover rounded-xl border border-slate-200 flex-shrink-0" />
+                )}
+                <div className="flex-1">
+                  <input type="file" accept="image/jpeg,image/png,image/webp"
+                    onChange={e => setImageFile(e.target.files?.[0] ?? null)}
+                    className="block w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" />
+                  <p className="text-xs text-slate-400 mt-1">JPG, PNG or WebP · max 2 MB</p>
+                  {imageFile && (
+                    <button type="button" onClick={() => setImageFile(null)}
+                      className="text-xs text-red-500 hover:underline mt-1">Remove</button>
+                  )}
+                </div>
+              </div>
+            </Field>
+          </div>
+          <div className="col-span-2">
             <Field label="Status">
               <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className={INPUT}>
                 <option value="active">Active</option>
@@ -139,6 +163,8 @@ export default function TyresPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [editingImageUrl, setEditingImageUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
@@ -166,10 +192,14 @@ export default function TyresPage() {
   function openAdd() {
     setEditingId(null);
     setForm({ ...BLANK });
+    setImageFile(null);
+    setEditingImageUrl(undefined);
   }
 
   function openEdit(t: Tyre) {
     setEditingId(t.id);
+    setImageFile(null);
+    setEditingImageUrl(t.image_url ?? undefined);
     setForm({
       brand_id: String(t.brand_id), model: t.model,
       size_id: String(t.size_id),
@@ -195,6 +225,21 @@ export default function TyresPage() {
     };
   }
 
+  function buildFormData(f: FormData): globalThis.FormData {
+    const fd = new globalThis.FormData();
+    fd.append('brand_id', f.brand_id);
+    fd.append('model', f.model);
+    fd.append('size_id', f.size_id);
+    if (f.season_id) fd.append('season_id', f.season_id);
+    if (f.tyre_type_id) fd.append('tyre_type_id', f.tyre_type_id);
+    fd.append('price', f.price);
+    fd.append('stock', f.stock);
+    if (f.description) fd.append('description', f.description);
+    fd.append('status', f.status);
+    if (imageFile) fd.append('image', imageFile);
+    return fd;
+  }
+
   async function handleSave() {
     if (!form) return;
     if (!form.brand_id || !form.model || !form.size_id || !form.price) {
@@ -203,15 +248,28 @@ export default function TyresPage() {
     setSaving(true);
     try {
       if (editingId) {
-        const updated = await adminApi.put<Tyre>(`/api/admin/tyres/${editingId}`, buildPayload(form));
-        setTyres(prev => prev.map(t => t.id === editingId ? { ...t, ...updated } : t));
+        if (imageFile) {
+          const fd = buildFormData(form);
+          fd.append('_method', 'PUT');
+          const updated = await adminApi.putForm<Tyre>(`/api/admin/tyres/${editingId}`, fd);
+          setTyres(prev => prev.map(t => t.id === editingId ? { ...t, ...updated } : t));
+        } else {
+          const updated = await adminApi.put<Tyre>(`/api/admin/tyres/${editingId}`, buildPayload(form));
+          setTyres(prev => prev.map(t => t.id === editingId ? { ...t, ...updated } : t));
+        }
         showMsg('Tyre updated successfully');
       } else {
-        const created = await adminApi.post<Tyre>('/api/admin/tyres', buildPayload(form));
-        setTyres(prev => [created, ...prev]);
+        if (imageFile) {
+          const created = await adminApi.postForm<Tyre>('/api/admin/tyres', buildFormData(form));
+          setTyres(prev => [created, ...prev]);
+        } else {
+          const created = await adminApi.post<Tyre>('/api/admin/tyres', buildPayload(form));
+          setTyres(prev => [created, ...prev]);
+        }
         showMsg('Tyre added successfully');
       }
       setForm(null);
+      setImageFile(null);
     } catch (e: unknown) {
       showMsg(e instanceof Error ? e.message : 'Save failed', false);
     } finally { setSaving(false); }
@@ -323,7 +381,8 @@ export default function TyresPage() {
           title={editingId ? 'Edit Tyre' : 'Add New Tyre'}
           form={form} setForm={setForm}
           brands={brands} sizes={sizes} seasons={seasons} tyreTypes={tyreTypes}
-          onSave={handleSave} onClose={() => setForm(null)} saving={saving}
+          onSave={handleSave} onClose={() => { setForm(null); setImageFile(null); }} saving={saving}
+          imageFile={imageFile} setImageFile={setImageFile} currentImageUrl={editingImageUrl}
         />
       )}
     </div>
