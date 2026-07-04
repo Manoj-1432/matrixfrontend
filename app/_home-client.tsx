@@ -1,6 +1,6 @@
 'use client';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const PHONE = '07721570075';
@@ -80,9 +80,9 @@ const FAQS = [
   { q: 'What is a TPMS sensor and do I need one?', a: 'TPMS (Tyre Pressure Monitoring System) sensors are fitted to most cars made after 2014. After a tyre change the sensor must be reset or replaced — we carry out this service as standard.' },
 ];
 
-function Icon({ d, className = 'w-5 h-5' }: { d: string; className?: string }) {
+function Icon({ d, className = 'w-5 h-5', style }: { d: string; className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
+    <svg className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d={d} />
     </svg>
   );
