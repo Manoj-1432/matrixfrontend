@@ -5,20 +5,20 @@ import { adminApi } from '@/lib/adminApi';
 
 type Charge = {
   id: number;
-  label: string;
-  min_distance: number;
-  max_distance: number;
+  from_distance: number;
+  to_distance: number;
   charge: number;
+  status: 'active' | 'inactive';
 };
 
 type ChargeForm = {
-  label: string;
-  min_distance: string;
-  max_distance: string;
+  from_distance: string;
+  to_distance: string;
   charge: string;
+  status: 'active' | 'inactive';
 };
 
-const BLANK: ChargeForm = { label: '', min_distance: '0', max_distance: '10', charge: '0' };
+const BLANK: ChargeForm = { from_distance: '0', to_distance: '10', charge: '0', status: 'active' };
 const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -68,15 +68,19 @@ export default function DeliveryChargesPage() {
 
   function openEdit(c: Charge) {
     setEditingId(c.id);
-    setForm({ label: c.label, min_distance: String(c.min_distance), max_distance: String(c.max_distance), charge: String(c.charge) });
+    setForm({ from_distance: String(c.from_distance), to_distance: String(c.to_distance), charge: String(c.charge), status: c.status });
   }
 
   async function handleSave() {
     if (!form) return;
-    if (!form.label.trim()) { showMsg('Label is required', false); return; }
     setSaving(true);
     try {
-      const body = { label: form.label.trim(), min_distance: Number(form.min_distance), max_distance: Number(form.max_distance), charge: parseFloat(form.charge) };
+      const body = {
+        from_distance: Number(form.from_distance),
+        to_distance: Number(form.to_distance),
+        charge: parseFloat(form.charge),
+        status: form.status,
+      };
       if (editingId) {
         const updated = await adminApi.put<Charge>(`/api/admin/delivery-charges/${editingId}`, body);
         setCharges(prev => prev.map(c => c.id === editingId ? { ...c, ...updated } : c));
@@ -139,10 +143,10 @@ export default function DeliveryChargesPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                <th className="px-6 py-3 text-left">Label</th>
-                <th className="px-6 py-3 text-left">Min Distance</th>
-                <th className="px-6 py-3 text-left">Max Distance</th>
+                <th className="px-6 py-3 text-left">From (miles)</th>
+                <th className="px-6 py-3 text-left">To (miles)</th>
                 <th className="px-6 py-3 text-right">Charge</th>
+                <th className="px-6 py-3 text-center">Status</th>
                 <th className="px-6 py-3 text-center">Actions</th>
               </tr>
             </thead>
@@ -154,10 +158,14 @@ export default function DeliveryChargesPage() {
               )}
               {charges.map(c => (
                 <tr key={c.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-slate-800">{c.label}</td>
-                  <td className="px-6 py-4 text-slate-600">{c.min_distance} km</td>
-                  <td className="px-6 py-4 text-slate-600">{c.max_distance} km</td>
+                  <td className="px-6 py-4 text-slate-600">{c.from_distance} mi</td>
+                  <td className="px-6 py-4 text-slate-600">{c.to_distance} mi</td>
                   <td className="px-6 py-4 text-right font-bold text-slate-900">£{Number(c.charge).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-center">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${c.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {c.status}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex items-center justify-center gap-3">
                       <button onClick={() => openEdit(c)} className="text-blue-600 hover:text-blue-800 text-xs font-semibold hover:underline">Edit</button>
@@ -177,23 +185,25 @@ export default function DeliveryChargesPage() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7">
             <h3 className="font-black text-slate-900 text-lg mb-6">{editingId ? 'Edit Charge' : 'Add Charge Rule'}</h3>
             <div className="flex flex-col gap-4">
-              <Field label="Label *">
-                <input type="text" value={form.label} onChange={e => setForm({ ...form, label: e.target.value })}
-                  placeholder="e.g. Local Delivery" className={INPUT} />
-              </Field>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Min Distance (km) *">
-                  <input type="number" min="0" step="0.1" value={form.min_distance}
-                    onChange={e => setForm({ ...form, min_distance: e.target.value })} className={INPUT} />
+                <Field label="From Distance (miles) *">
+                  <input type="number" min="0" step="0.1" value={form.from_distance}
+                    onChange={e => setForm({ ...form, from_distance: e.target.value })} className={INPUT} />
                 </Field>
-                <Field label="Max Distance (km) *">
-                  <input type="number" min="0" step="0.1" value={form.max_distance}
-                    onChange={e => setForm({ ...form, max_distance: e.target.value })} className={INPUT} />
+                <Field label="To Distance (miles) *">
+                  <input type="number" min="0" step="0.1" value={form.to_distance}
+                    onChange={e => setForm({ ...form, to_distance: e.target.value })} className={INPUT} />
                 </Field>
               </div>
               <Field label="Charge (£) *">
                 <input type="number" min="0" step="0.01" value={form.charge}
                   onChange={e => setForm({ ...form, charge: e.target.value })} className={INPUT} />
+              </Field>
+              <Field label="Status *">
+                <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })} className={INPUT}>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
               </Field>
             </div>
             <div className="flex gap-3 mt-6">
