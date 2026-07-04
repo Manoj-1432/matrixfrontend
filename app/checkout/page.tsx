@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, customerApi, type CheckoutConfig } from '@/lib/api';
 import BookingProgress from '@/components/BookingProgress';
@@ -21,6 +21,7 @@ function CheckoutInner() {
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [deliveryFee, setDeliveryFee]           = useState<number | null>(null);
   const [calculatingDelivery, setCalcDelivery]  = useState(false);
+  const deliveryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '', phone: '',
@@ -61,17 +62,25 @@ function CheckoutInner() {
     }
   }, []);
 
-  function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })); }
+  function set(k: string, v: string) {
+    setForm(f => ({ ...f, [k]: v }));
+    if (k === 'postcode') {
+      const pc = v.replace(/\s/g, '');
+      if (deliveryTimer.current) clearTimeout(deliveryTimer.current);
+      if (pc.length >= 5) {
+        deliveryTimer.current = setTimeout(() => autoQuoteDelivery(v), 700);
+      } else {
+        setDeliveryFee(null);
+      }
+    }
+  }
 
-  async function calculateDelivery() {
-    if (!form.address.trim() || !form.postcode.trim()) return;
+  async function autoQuoteDelivery(postcode: string) {
+    const pc = postcode.trim();
+    if (pc.length < 5) return;
     setCalcDelivery(true);
     try {
-      const d = await api.post<{ delivery_charge: number }>('/api/public/delivery-quote', {
-        address: form.address,
-        city: form.city,
-        postcode: form.postcode,
-      });
+      const d = await api.post<{ delivery_charge: number }>('/api/public/delivery-quote', { postcode: pc });
       setDeliveryFee(d.delivery_charge ?? 0);
     } catch { setDeliveryFee(null); }
     finally { setCalcDelivery(false); }
@@ -202,19 +211,20 @@ function CheckoutInner() {
                   </div>
                   <div>
                     <label className={LABEL}>Postcode *</label>
-                    <div className="flex gap-2">
+                    <div className="relative">
                       <input type="text" required value={form.postcode} placeholder="CV1 1AA"
                         onChange={e => set('postcode', e.target.value)}
-                        className={INPUT + ' flex-1' + err('postcode')} />
-                      <button type="button" onClick={calculateDelivery} disabled={calculatingDelivery || !form.address.trim() || !form.postcode.trim()}
-                        className="shrink-0 text-xs font-bold text-blue-600 border border-blue-200 px-3 rounded-xl hover:bg-blue-50 transition-colors disabled:opacity-40">
-                        {calculatingDelivery ? '…' : 'Quote'}
-                      </button>
+                        className={INPUT + err('postcode')} />
+                      {calculatingDelivery && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
                     </div>
                     {fieldErrors.postcode && <p className="text-xs text-red-500 mt-1">{fieldErrors.postcode[0]}</p>}
-                    {deliveryFee !== null && (
+                    {deliveryFee !== null && !calculatingDelivery && (
                       <p className="text-xs text-green-600 font-medium mt-1">
-                        Delivery charge: {deliveryFee === 0 ? 'Free' : `£${deliveryFee.toFixed(2)}`}
+                        ✓ Delivery charge: {deliveryFee === 0 ? 'Free' : `£${deliveryFee.toFixed(2)}`}
                       </p>
                     )}
                   </div>
