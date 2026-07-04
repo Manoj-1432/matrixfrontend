@@ -181,9 +181,6 @@ function BookingInner() {
                 ? `Available Slots — ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}`
                 : 'Available Slots'}
             </p>
-            {selectedDayName && (
-              <p className="text-[10px] text-slate-300 mb-3">filtering day: {selectedDayName} | total slots loaded: {allSlots.length} | days in DB: {[...new Set(allSlots.map(s=>s.day))].join(', ')}</p>
-            )}
 
             {!selectedDate && (
               <div className="flex flex-col items-center justify-center py-10 text-center">
