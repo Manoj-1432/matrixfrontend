@@ -4,6 +4,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { api, customerApi, type CheckoutConfig } from '@/lib/api';
 import BookingProgress from '@/components/BookingProgress';
 
+const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all placeholder:text-slate-300';
+const LABEL = 'block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5';
+
 function CheckoutInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -16,13 +19,13 @@ function CheckoutInner() {
   const [config, setConfig]       = useState<CheckoutConfig | null>(null);
   const [coupon, setCoupon]       = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
-  const [deliveryFee, setDeliveryFee]       = useState<number | null>(null);
-  const [calculatingDelivery, setCalcDelivery] = useState(false);
+  const [deliveryFee, setDeliveryFee]           = useState<number | null>(null);
+  const [calculatingDelivery, setCalcDelivery]  = useState(false);
 
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '', phone: '',
     address: '', city: '', postcode: '',
-    vehicle_registration: params.get('tyre_id') ? '' : '',
+    vehicle_registration: '',
     vehicle_make: '', vehicle_model: '',
     tyre_brand: params.get('tyre_brand') ?? '',
     tyre_model: params.get('tyre_model') ?? '',
@@ -32,14 +35,13 @@ function CheckoutInner() {
     customer_comment: '',
   });
 
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError]           = useState<string | null>(null);
+  const [submitting, setSubmitting]   = useState(false);
+  const [error, setError]             = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [tpmsSelected, setTpmsSelected] = useState(false);
 
   useEffect(() => {
     api.get<CheckoutConfig>('/api/public/checkout-config').then(setConfig).catch(() => null);
-
-    // Pre-fill from logged-in customer
     const raw = typeof window !== 'undefined' ? localStorage.getItem('customer_user') : null;
     if (raw) {
       try {
@@ -65,7 +67,11 @@ function CheckoutInner() {
     if (!form.address.trim() || !form.postcode.trim()) return;
     setCalcDelivery(true);
     try {
-      const d = await api.post<{ charge: number }>('/api/public/delivery-quote', { address: form.address, city: form.city, postcode: form.postcode });
+      const d = await api.post<{ charge: number }>('/api/public/delivery-quote', {
+        address: form.address,
+        city: form.city,
+        postcode: form.postcode,
+      });
       setDeliveryFee(d.charge ?? 0);
     } catch { setDeliveryFee(null); }
     finally { setCalcDelivery(false); }
@@ -107,8 +113,6 @@ function CheckoutInner() {
     } finally { setSubmitting(false); }
   }
 
-  const [tpmsSelected, setTpmsSelected] = useState(false);
-
   const unitPrice   = Number(form.tyre_unit_price) || 0;
   const qty         = Number(form.tyre_quantity) || 1;
   const subtotal    = unitPrice * qty;
@@ -118,18 +122,8 @@ function CheckoutInner() {
   const delivery    = deliveryFee ?? 0;
   const total       = subtotal + vatAmount + tpmsCharge + delivery;
 
-  const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all placeholder:text-slate-300';
-
-  function Field({ label, k, type = 'text', required = true, placeholder = '' }: { label: string; k: keyof typeof form; type?: string; required?: boolean; placeholder?: string }) {
-    return (
-      <div>
-        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">{label}{required && ' *'}</label>
-        <input type={type} required={required} value={form[k]} placeholder={placeholder}
-          onChange={e => set(k, e.target.value)}
-          className={INPUT + (fieldErrors[k] ? ' border-red-300 ring-2 ring-red-50' : '')} />
-        {fieldErrors[k] && <p className="text-xs text-red-500 mt-1">{fieldErrors[k][0]}</p>}
-      </div>
-    );
+  function err(k: string) {
+    return fieldErrors[k] ? ' border-red-300 ring-2 ring-red-50' : '';
   }
 
   return (
@@ -163,12 +157,28 @@ function CheckoutInner() {
                 Personal Details
               </h2>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="First Name" k="first_name" />
-                <Field label="Last Name" k="last_name" />
+                <div>
+                  <label className={LABEL}>First Name *</label>
+                  <input type="text" required value={form.first_name} onChange={e => set('first_name', e.target.value)} className={INPUT + err('first_name')} />
+                  {fieldErrors.first_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.first_name[0]}</p>}
+                </div>
+                <div>
+                  <label className={LABEL}>Last Name *</label>
+                  <input type="text" required value={form.last_name} onChange={e => set('last_name', e.target.value)} className={INPUT + err('last_name')} />
+                  {fieldErrors.last_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.last_name[0]}</p>}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3 mt-3">
-                <Field label="Email" k="email" type="email" />
-                <Field label="Phone" k="phone" type="tel" />
+                <div>
+                  <label className={LABEL}>Email *</label>
+                  <input type="email" required value={form.email} onChange={e => set('email', e.target.value)} className={INPUT + err('email')} />
+                  {fieldErrors.email && <p className="text-xs text-red-500 mt-1">{fieldErrors.email[0]}</p>}
+                </div>
+                <div>
+                  <label className={LABEL}>Phone *</label>
+                  <input type="tel" required value={form.phone} onChange={e => set('phone', e.target.value)} className={INPUT + err('phone')} />
+                  {fieldErrors.phone && <p className="text-xs text-red-500 mt-1">{fieldErrors.phone[0]}</p>}
+                </div>
               </div>
             </div>
 
@@ -179,20 +189,29 @@ function CheckoutInner() {
                 Fitting Address
               </h2>
               <div className="flex flex-col gap-3">
-                <Field label="Street Address" k="address" placeholder="123 High Street" />
+                <div>
+                  <label className={LABEL}>Street Address *</label>
+                  <input type="text" required value={form.address} placeholder="123 High Street" onChange={e => set('address', e.target.value)} className={INPUT + err('address')} />
+                  {fieldErrors.address && <p className="text-xs text-red-500 mt-1">{fieldErrors.address[0]}</p>}
+                </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="City" k="city" placeholder="Coventry" />
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Postcode *</label>
+                    <label className={LABEL}>City *</label>
+                    <input type="text" required value={form.city} placeholder="Coventry" onChange={e => set('city', e.target.value)} className={INPUT + err('city')} />
+                    {fieldErrors.city && <p className="text-xs text-red-500 mt-1">{fieldErrors.city[0]}</p>}
+                  </div>
+                  <div>
+                    <label className={LABEL}>Postcode *</label>
                     <div className="flex gap-2">
                       <input type="text" required value={form.postcode} placeholder="CV1 1AA"
                         onChange={e => set('postcode', e.target.value)}
-                        className={INPUT + ' flex-1'} />
-                      <button type="button" onClick={calculateDelivery} disabled={calculatingDelivery || !form.postcode}
+                        className={INPUT + ' flex-1' + err('postcode')} />
+                      <button type="button" onClick={calculateDelivery} disabled={calculatingDelivery || !form.address.trim() || !form.postcode.trim()}
                         className="shrink-0 text-xs font-bold text-blue-600 border border-blue-200 px-3 rounded-xl hover:bg-blue-50 transition-colors disabled:opacity-40">
                         {calculatingDelivery ? '…' : 'Quote'}
                       </button>
                     </div>
+                    {fieldErrors.postcode && <p className="text-xs text-red-500 mt-1">{fieldErrors.postcode[0]}</p>}
                     {deliveryFee !== null && (
                       <p className="text-xs text-green-600 font-medium mt-1">
                         Delivery charge: {deliveryFee === 0 ? 'Free' : `£${deliveryFee.toFixed(2)}`}
@@ -210,9 +229,18 @@ function CheckoutInner() {
                 Vehicle Details
               </h2>
               <div className="grid grid-cols-3 gap-3">
-                <Field label="Reg Number" k="vehicle_registration" required={false} placeholder="AB12 CDE" />
-                <Field label="Make" k="vehicle_make" required={false} placeholder="Ford" />
-                <Field label="Model" k="vehicle_model" required={false} placeholder="Focus" />
+                <div>
+                  <label className={LABEL}>Reg Number</label>
+                  <input type="text" value={form.vehicle_registration} placeholder="AB12 CDE" onChange={e => set('vehicle_registration', e.target.value)} className={INPUT} />
+                </div>
+                <div>
+                  <label className={LABEL}>Make</label>
+                  <input type="text" value={form.vehicle_make} placeholder="Ford" onChange={e => set('vehicle_make', e.target.value)} className={INPUT} />
+                </div>
+                <div>
+                  <label className={LABEL}>Model</label>
+                  <input type="text" value={form.vehicle_model} placeholder="Focus" onChange={e => set('vehicle_model', e.target.value)} className={INPUT} />
+                </div>
               </div>
             </div>
 
@@ -223,25 +251,41 @@ function CheckoutInner() {
                 Tyre Details
               </h2>
               <div className="grid grid-cols-2 gap-3 mb-3">
-                <Field label="Brand" k="tyre_brand" />
-                <Field label="Model" k="tyre_model" />
+                <div>
+                  <label className={LABEL}>Brand *</label>
+                  <input type="text" required value={form.tyre_brand} onChange={e => set('tyre_brand', e.target.value)} className={INPUT + err('tyre_brand')} />
+                  {fieldErrors.tyre_brand && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_brand[0]}</p>}
+                </div>
+                <div>
+                  <label className={LABEL}>Model *</label>
+                  <input type="text" required value={form.tyre_model} onChange={e => set('tyre_model', e.target.value)} className={INPUT + err('tyre_model')} />
+                  {fieldErrors.tyre_model && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_model[0]}</p>}
+                </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <Field label="Size" k="tyre_size" placeholder="205/55R16" />
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Quantity *</label>
+                  <label className={LABEL}>Size *</label>
+                  <input type="text" required value={form.tyre_size} placeholder="205/55R16" onChange={e => set('tyre_size', e.target.value)} className={INPUT + err('tyre_size')} />
+                  {fieldErrors.tyre_size && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_size[0]}</p>}
+                </div>
+                <div>
+                  <label className={LABEL}>Quantity *</label>
                   <select value={form.tyre_quantity} onChange={e => set('tyre_quantity', e.target.value)}
                     className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer">
                     {[1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
-                <Field label="Price / tyre (£)" k="tyre_unit_price" type="number" placeholder="0.00" />
+                <div>
+                  <label className={LABEL}>Price / tyre (£) *</label>
+                  <input type="number" required value={form.tyre_unit_price} placeholder="0.00" onChange={e => set('tyre_unit_price', e.target.value)} className={INPUT + err('tyre_unit_price')} />
+                  {fieldErrors.tyre_unit_price && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_unit_price[0]}</p>}
+                </div>
               </div>
             </div>
 
             {/* Comments */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Additional Comments</label>
+              <label className={LABEL}>Additional Comments</label>
               <textarea value={form.customer_comment} rows={3} onChange={e => set('customer_comment', e.target.value)}
                 placeholder="Any special instructions, access notes, etc."
                 className={INPUT + ' resize-none'} />
@@ -304,7 +348,7 @@ function CheckoutInner() {
 
               {/* Coupon */}
               <div className="mb-5">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Coupon Code</label>
+                <label className={LABEL}>Coupon Code</label>
                 <div className="flex gap-2">
                   <input type="text" value={coupon} onChange={e => setCoupon(e.target.value.toUpperCase())}
                     placeholder="SAVE10"
