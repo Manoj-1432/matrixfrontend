@@ -154,6 +154,22 @@ function TyresInner() {
     } finally { setLoading(false); }
   }
 
+  async function selectRecommendedSize(sizeLabel: string) {
+    // Parse formats like "195/65 R15" or "205/60R16"
+    const m = sizeLabel.replace(/\s+/g, '').match(/^(\d+)\/(\d+)R(\d+)/i);
+    if (!m) return;
+    const [, w, r, ri] = m;
+    setWidth(w); setRatio(r); setRim(ri);
+    setLoading(true); setError(null); setTyres(null);
+    try {
+      const data = await api.post<VehicleLookupResult>('/api/vehicle/lookup', { tyre_size: sizeLabel.replace(/\s+/g, '') });
+      setTyres(data.tyres ?? []);
+    } catch (e: unknown) {
+      const err = e as { message?: string };
+      setError(err.message ?? 'Search failed. Please try again.');
+    } finally { setLoading(false); }
+  }
+
   async function searchBySize() {
     if (!width || !ratio || !rim) { setError('Please select Width, Profile and Rim size.'); return; }
     const sizeLabel = `${width}/${ratio}R${rim}`;
@@ -342,9 +358,20 @@ function TyresInner() {
               {vehicle.fuelType && <span><strong className="text-slate-700">Fuel:</strong> {vehicle.fuelType}</span>}
             </div>
             {likelySizes.length > 0 && (
-              <p className="text-xs text-blue-600 mt-2 font-medium">
-                Recommended size{likelySizes.length > 1 ? 's' : ''}: {likelySizes.join(', ')}
-              </p>
+              <div className="mt-3">
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">
+                  Select your tyre size:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {likelySizes.map(size => (
+                    <button key={size} onClick={() => selectRecommendedSize(size)}
+                      className="px-4 py-2 rounded-xl text-sm font-bold border-2 border-blue-400 text-blue-700 bg-white hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all font-mono">
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-400 mt-2">Tap a size to search for matching tyres</p>
+              </div>
             )}
           </div>
         )}
