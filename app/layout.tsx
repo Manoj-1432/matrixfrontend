@@ -138,18 +138,18 @@ const localBusinessSchema = {
   ],
 };
 
-async function getAddress(): Promise<string> {
+async function getContact(): Promise<{ address: string; email: string }> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'}/api/public/contact`, { next: { revalidate: 3600 } });
     const json = await res.json();
-    return json?.data?.address ?? '';
+    return { address: json?.data?.address ?? '', email: json?.data?.contact_email ?? '' };
   } catch {
-    return '';
+    return { address: '', email: '' };
   }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const address = await getAddress();
+  const { address, email } = await getContact();
   return (
     <html lang="en-GB" className={inter.className}>
       <head>
@@ -196,6 +196,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     </span>
                     WhatsApp Us
                   </a>
+                  {email && (
+                    <a href={`mailto:${email}`} className="flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors group">
+                      <span className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors">
+                        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                      </span>
+                      {email}
+                    </a>
+                  )}
                   {address && (
                     <div className="flex items-start gap-2.5 text-gray-500 text-sm">
                       <span className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
