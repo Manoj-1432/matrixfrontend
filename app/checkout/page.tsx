@@ -20,6 +20,7 @@ function CheckoutInner() {
   const [coupon, setCoupon]       = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [deliveryFee, setDeliveryFee]           = useState<number | null>(null);
+  const [outOfRange, setOutOfRange]             = useState(false);
   const [calculatingDelivery, setCalcDelivery]  = useState(false);
   const deliveryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -71,6 +72,7 @@ function CheckoutInner() {
         deliveryTimer.current = setTimeout(() => autoQuoteDelivery(v), 700);
       } else {
         setDeliveryFee(null);
+        setOutOfRange(false);
       }
     }
   }
@@ -79,9 +81,15 @@ function CheckoutInner() {
     const pc = postcode.trim();
     if (pc.length < 5) return;
     setCalcDelivery(true);
+    setOutOfRange(false);
     try {
-      const d = await api.post<{ delivery_charge: number }>('/api/public/delivery-quote', { postcode: pc });
-      setDeliveryFee(d.delivery_charge ?? 0);
+      const d = await api.post<{ delivery_charge: number; out_of_range: boolean }>('/api/public/delivery-quote', { postcode: pc });
+      if (d.out_of_range) {
+        setOutOfRange(true);
+        setDeliveryFee(null);
+      } else {
+        setDeliveryFee(d.delivery_charge ?? 0);
+      }
     } catch { setDeliveryFee(null); }
     finally { setCalcDelivery(false); }
   }
@@ -222,7 +230,12 @@ function CheckoutInner() {
                       )}
                     </div>
                     {fieldErrors.postcode && <p className="text-xs text-red-500 mt-1">{fieldErrors.postcode[0]}</p>}
-                    {deliveryFee !== null && !calculatingDelivery && (
+                    {!calculatingDelivery && outOfRange && (
+                      <p className="text-xs text-red-600 font-medium mt-1">
+                        ✗ Sorry, we don't currently cover this area. Please call us to arrange.
+                      </p>
+                    )}
+                    {deliveryFee !== null && !calculatingDelivery && !outOfRange && (
                       <p className="text-xs text-green-600 font-medium mt-1">
                         ✓ Delivery charge: {deliveryFee === 0 ? 'Free' : `£${deliveryFee.toFixed(2)}`}
                       </p>
@@ -375,11 +388,16 @@ function CheckoutInner() {
                 )}
               </div>
 
-              <button type="submit" disabled={submitting}
+              <button type="submit" disabled={submitting || outOfRange}
                 className="w-full text-white font-bold py-4 rounded-xl text-sm transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-                style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)', boxShadow: '0 4px 16px rgba(79,70,229,0.3)' }}>
-                {submitting ? 'Processing…' : 'Pay with Stripe →'}
+                style={{ background: outOfRange ? '#94a3b8' : 'linear-gradient(135deg,#1e3a8a,#4f46e5)', boxShadow: outOfRange ? 'none' : '0 4px 16px rgba(79,70,229,0.3)' }}>
+                {submitting ? 'Processing…' : outOfRange ? 'Area Not Covered' : 'Pay with Stripe →'}
               </button>
+              {outOfRange && (
+                <p className="mt-3 text-center text-xs text-slate-500">
+                  Call us on <a href="tel:07721570075" className="font-bold text-blue-600 underline">07721 570075</a> to discuss your location.
+                </p>
+              )}
 
               <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
                 <svg className="w-3.5 h-3.5 text-green-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
