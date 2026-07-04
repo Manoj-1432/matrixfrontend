@@ -73,8 +73,21 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
-    adminApi.get<Settings>('/api/admin/settings')
-      .then(data => setSettings({ ...DEFAULTS, ...data }))
+    adminApi.get<any>('/api/admin/settings')
+      .then(data => setSettings({
+        ...DEFAULTS,
+        business_name: data.brand_name ?? '',
+        phone: data.contact_number ?? '',
+        email: data.contact_email ?? '',
+        address: data.address ?? '',
+        vat_enabled: !!data.vat_enabled,
+        vat_percentage: data.vat_percentage ?? 20,
+        platform_fee_enabled: !!data.platform_fee_enabled,
+        platform_fee: data.platform_fee ?? 0,
+        tpms_charge_enabled: !!data.tpms_charge_enabled,
+        tpms_charge: data.tpms_charge ?? 0,
+        currency: data.currency ?? 'GBP',
+      }))
       .catch(() => showMsg('Failed to load settings', false))
       .finally(() => setLoading(false));
   }, [router]);
@@ -83,11 +96,17 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       const payload = {
-        ...settings,
+        brand_name: settings.business_name,
+        contact_number: settings.phone,
+        contact_email: settings.email,
+        address: settings.address,
+        vat_enabled: settings.vat_enabled,
         vat_percentage: Number(settings.vat_percentage),
+        platform_fee_enabled: settings.platform_fee_enabled,
         platform_fee: Number(settings.platform_fee),
+        tpms_charge_enabled: settings.tpms_charge_enabled,
         tpms_charge: Number(settings.tpms_charge),
-        min_fitting_date: Number(settings.min_fitting_date),
+        currency: settings.currency,
       };
       await adminApi.put('/api/admin/settings', payload);
       showMsg('Settings saved successfully');

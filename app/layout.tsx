@@ -138,7 +138,18 @@ const localBusinessSchema = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function getAddress(): Promise<string> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'}/api/public/contact`, { next: { revalidate: 3600 } });
+    const json = await res.json();
+    return json?.data?.address ?? '';
+  } catch {
+    return '';
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const address = await getAddress();
   return (
     <html lang="en-GB" className={inter.className}>
       <head>
@@ -185,6 +196,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     </span>
                     WhatsApp Us
                   </a>
+                  {address && (
+                    <div className="flex items-start gap-2.5 text-gray-500 text-sm">
+                      <span className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      </span>
+                      <span className="leading-relaxed">{address}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
