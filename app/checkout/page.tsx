@@ -62,10 +62,10 @@ function CheckoutInner() {
   function set(k: string, v: string) { setForm(f => ({ ...f, [k]: v })); }
 
   async function calculateDelivery() {
-    if (!form.postcode.trim()) return;
+    if (!form.address.trim() || !form.postcode.trim()) return;
     setCalcDelivery(true);
     try {
-      const d = await api.post<{ charge: number }>('/api/public/delivery-quote', { postcode: form.postcode });
+      const d = await api.post<{ charge: number }>('/api/public/delivery-quote', { address: form.address, city: form.city, postcode: form.postcode });
       setDeliveryFee(d.charge ?? 0);
     } catch { setDeliveryFee(null); }
     finally { setCalcDelivery(false); }
