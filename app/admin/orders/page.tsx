@@ -25,8 +25,8 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
-    adminApi.get<{ data: { orders: Order[] } }>('/api/admin/orders')
-      .then(d => setOrders(d.data?.orders ?? []))
+    adminApi.get<{ orders: Order[]; meta: unknown; stats: unknown }>('/api/admin/orders')
+      .then(d => setOrders(d.orders ?? []))
       .catch(() => router.push('/admin/login'))
       .finally(() => setLoading(false));
   }, [router]);
