@@ -8,7 +8,8 @@ type Order = {
   amount: number; tyre_brand: string; tyre_model: string; tyre_size: string;
   tyre_quantity: number; vehicle_registration?: string; fitting_date?: string;
   created_at: string;
-  user?: { name: string; email: string; phone?: string; address?: string };
+  user?: { name: string; email: string; phone?: string; address?: string; city?: string; postcode?: string };
+  slot?: { start_time: string; end_time: string; day: string };
 };
 
 function fmtDate(d?: string) {
@@ -67,16 +68,17 @@ export default function OrdersPage() {
             <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
               <th className="px-6 py-3 text-left">Order</th>
               <th className="px-6 py-3 text-left">Customer</th>
+              <th className="px-6 py-3 text-left">Address</th>
               <th className="px-6 py-3 text-left">Reg</th>
               <th className="px-6 py-3 text-left">Tyre</th>
-              <th className="px-6 py-3 text-left">Fitting Date</th>
+              <th className="px-6 py-3 text-left">Fitting Date & Time</th>
               <th className="px-6 py-3 text-left">Status</th>
               <th className="px-6 py-3 text-right">Amount</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {orders.length === 0 && (
-              <tr><td colSpan={7} className="px-6 py-12 text-center text-slate-400">No orders yet</td></tr>
+              <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">No orders yet</td></tr>
             )}
             {orders.map(o => (
               <tr key={o.id} onClick={e => { if ((e.target as HTMLElement).closest('select,button,a')) return; router.push(`/admin/orders/${o.id}`); }} className="hover:bg-slate-50 transition-colors cursor-pointer">
@@ -88,12 +90,26 @@ export default function OrdersPage() {
                   {o.user?.email && <p className="text-xs text-slate-400">{o.user.email}</p>}
                   {o.user?.phone && <p className="text-xs text-slate-400">{o.user.phone}</p>}
                 </td>
+                <td className="px-6 py-4 text-slate-500 text-xs">
+                  {o.user?.address ? (
+                    <>
+                      <p>{o.user.address}</p>
+                      {o.user.city && <p>{o.user.city}</p>}
+                      {o.user.postcode && <p className="font-mono font-semibold">{o.user.postcode}</p>}
+                    </>
+                  ) : '—'}
+                </td>
                 <td className="px-6 py-4 font-mono text-slate-600 text-xs">{o.vehicle_registration ?? '—'}</td>
                 <td className="px-6 py-4 text-slate-600">
                   {o.tyre_brand} {o.tyre_model}<br />
                   <span className="text-xs text-slate-400">{o.tyre_size} × {o.tyre_quantity}</span>
                 </td>
-                <td className="px-6 py-4 text-slate-500 text-xs">{fmtDate(o.fitting_date)}</td>
+                <td className="px-6 py-4 text-slate-500 text-xs">
+                  <p>{fmtDate(o.fitting_date)}</p>
+                  {o.slot && (
+                    <p className="text-slate-400">{o.slot.start_time} – {o.slot.end_time}</p>
+                  )}
+                </td>
                 <td className="px-6 py-4">
                   <select
                     value={o.status}
