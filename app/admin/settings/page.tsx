@@ -8,6 +8,7 @@ type Settings = {
   phone: string;
   email: string;
   address: string;
+  business_postcode: string;
   vat_enabled: boolean;
   vat_percentage: number | string;
   platform_fee_enabled: boolean;
@@ -19,7 +20,7 @@ type Settings = {
 };
 
 const DEFAULTS: Settings = {
-  business_name: '', phone: '', email: '', address: '',
+  business_name: '', phone: '', email: '', address: '', business_postcode: '',
   vat_enabled: false, vat_percentage: 20,
   platform_fee_enabled: false, platform_fee: 0,
   tpms_charge_enabled: false, tpms_charge: 0,
@@ -80,6 +81,7 @@ export default function SettingsPage() {
         phone: data.contact_number ?? '',
         email: data.contact_email ?? '',
         address: data.address ?? '',
+        business_postcode: data.business_postcode ?? '',
         vat_enabled: !!data.vat_enabled,
         vat_percentage: data.vat_percentage ?? 20,
         platform_fee_enabled: !!data.platform_fee_enabled,
@@ -100,6 +102,7 @@ export default function SettingsPage() {
         contact_number: settings.phone,
         contact_email: settings.email,
         address: settings.address,
+        business_postcode: settings.business_postcode,
         vat_enabled: settings.vat_enabled,
         vat_percentage: Number(settings.vat_percentage),
         platform_fee_enabled: settings.platform_fee_enabled,
@@ -154,6 +157,10 @@ export default function SettingsPage() {
         <Field label="Address">
           <textarea rows={3} value={settings.address} onChange={e => upd('address', e.target.value)}
             placeholder="Business address..." className={INPUT + ' resize-none'} />
+        </Field>
+        <Field label="Business Postcode" hint="Used to calculate delivery distance — e.g. CV2 2SB">
+          <input type="text" value={settings.business_postcode} onChange={e => upd('business_postcode', e.target.value.toUpperCase())}
+            placeholder="CV2 2SB" maxLength={8} className={INPUT + ' uppercase'} />
         </Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Currency">
