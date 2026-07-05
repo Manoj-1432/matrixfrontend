@@ -21,6 +21,7 @@ function CheckoutInner() {
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [deliveryFee, setDeliveryFee]           = useState<number | null>(null);
   const [outOfRange, setOutOfRange]             = useState(false);
+  const [deliveryError, setDeliveryError]       = useState<string | null>(null);
   const [calculatingDelivery, setCalcDelivery]  = useState(false);
   const deliveryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -82,6 +83,7 @@ function CheckoutInner() {
     if (pc.length < 5) return;
     setCalcDelivery(true);
     setOutOfRange(false);
+    setDeliveryError(null);
     try {
       const d = await api.post<{ delivery_charge: number; out_of_range: boolean }>('/api/public/delivery-quote', { postcode: pc });
       if (d.out_of_range) {
@@ -90,7 +92,11 @@ function CheckoutInner() {
       } else {
         setDeliveryFee(d.delivery_charge ?? 0);
       }
-    } catch { setDeliveryFee(null); }
+    } catch (e: unknown) {
+      const msg = (e as { message?: string })?.message ?? 'Could not calculate delivery';
+      setDeliveryError(msg);
+      setDeliveryFee(null);
+    }
     finally { setCalcDelivery(false); }
   }
 
@@ -234,6 +240,9 @@ function CheckoutInner() {
                       <p className="text-xs text-red-600 font-medium mt-1">
                         ✗ Sorry, we don't currently cover this area. Please call us to arrange.
                       </p>
+                    )}
+                    {!calculatingDelivery && deliveryError && (
+                      <p className="text-xs text-red-500 mt-1">✗ {deliveryError}</p>
                     )}
                     {deliveryFee !== null && !calculatingDelivery && !outOfRange && (
                       <p className="text-xs text-green-600 font-medium mt-1">
