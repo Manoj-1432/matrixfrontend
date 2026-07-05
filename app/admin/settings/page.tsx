@@ -17,6 +17,14 @@ type Settings = {
   tpms_charge: number | string;
   currency: string;
   min_fitting_date: number | string;
+  smtp_enabled: boolean;
+  smtp_host: string;
+  smtp_port: number | string;
+  smtp_username: string;
+  smtp_password: string;
+  smtp_encryption: string;
+  smtp_from_email: string;
+  smtp_from_name: string;
 };
 
 const DEFAULTS: Settings = {
@@ -25,6 +33,8 @@ const DEFAULTS: Settings = {
   platform_fee_enabled: false, platform_fee: 0,
   tpms_charge_enabled: false, tpms_charge: 0,
   currency: 'GBP', min_fitting_date: 1,
+  smtp_enabled: false, smtp_host: '', smtp_port: 587, smtp_username: '',
+  smtp_password: '', smtp_encryption: 'tls', smtp_from_email: '', smtp_from_name: '',
 };
 
 const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white';
@@ -82,6 +92,14 @@ export default function SettingsPage() {
         email: data.contact_email ?? '',
         address: data.address ?? '',
         business_postcode: data.business_postcode ?? '',
+        smtp_enabled: !!data.smtp_enabled,
+        smtp_host: data.smtp_host ?? '',
+        smtp_port: data.smtp_port ?? 587,
+        smtp_username: data.smtp_username ?? '',
+        smtp_password: data.smtp_password ?? '',
+        smtp_encryption: data.smtp_encryption ?? 'tls',
+        smtp_from_email: data.smtp_from_email ?? '',
+        smtp_from_name: data.smtp_from_name ?? '',
         vat_enabled: !!data.vat_enabled,
         vat_percentage: data.vat_percentage ?? 20,
         platform_fee_enabled: !!data.platform_fee_enabled,
@@ -103,6 +121,14 @@ export default function SettingsPage() {
         contact_email: settings.email,
         address: settings.address,
         business_postcode: settings.business_postcode,
+        smtp_enabled: settings.smtp_enabled,
+        smtp_host: settings.smtp_host,
+        smtp_port: Number(settings.smtp_port),
+        smtp_username: settings.smtp_username,
+        smtp_password: settings.smtp_password,
+        smtp_encryption: settings.smtp_encryption,
+        smtp_from_email: settings.smtp_from_email,
+        smtp_from_name: settings.smtp_from_name,
         vat_enabled: settings.vat_enabled,
         vat_percentage: Number(settings.vat_percentage),
         platform_fee_enabled: settings.platform_fee_enabled,
@@ -208,6 +234,57 @@ export default function SettingsPage() {
             </Field>
           )}
         </div>
+      </SectionCard>
+
+      {/* Email / SMTP */}
+      <SectionCard title="Email (SMTP)">
+        <div className="p-4 bg-slate-50 rounded-xl">
+          <Toggle value={settings.smtp_enabled} onChange={v => upd('smtp_enabled', v)} label="Enable Email Sending" />
+        </div>
+        {settings.smtp_enabled && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="SMTP Host" hint="e.g. smtp.gmail.com">
+                <input type="text" value={settings.smtp_host} onChange={e => upd('smtp_host', e.target.value)}
+                  placeholder="smtp.gmail.com" className={INPUT} />
+              </Field>
+              <Field label="SMTP Port">
+                <input type="number" value={settings.smtp_port} onChange={e => upd('smtp_port', e.target.value)}
+                  placeholder="587" className={INPUT} />
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Username / Email">
+                <input type="text" value={settings.smtp_username} onChange={e => upd('smtp_username', e.target.value)}
+                  placeholder="you@gmail.com" className={INPUT} />
+              </Field>
+              <Field label="Password / App Password">
+                <input type="password" value={settings.smtp_password} onChange={e => upd('smtp_password', e.target.value)}
+                  placeholder="••••••••••••" className={INPUT} />
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Encryption">
+                <select value={settings.smtp_encryption} onChange={e => upd('smtp_encryption', e.target.value)} className={INPUT}>
+                  <option value="tls">TLS (recommended)</option>
+                  <option value="ssl">SSL</option>
+                  <option value="none">None</option>
+                </select>
+              </Field>
+              <Field label="From Email">
+                <input type="email" value={settings.smtp_from_email} onChange={e => upd('smtp_from_email', e.target.value)}
+                  placeholder="noreply@matrixmobiletyres.co.uk" className={INPUT} />
+              </Field>
+            </div>
+            <Field label="From Name">
+              <input type="text" value={settings.smtp_from_name} onChange={e => upd('smtp_from_name', e.target.value)}
+                placeholder="Matrix Mobile Tyres" className={INPUT} />
+            </Field>
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+              <strong>Gmail:</strong> Use port 587, TLS, and an <strong>App Password</strong> (not your regular password). Go to Google Account → Security → 2-Step Verification → App passwords.
+            </div>
+          </>
+        )}
       </SectionCard>
 
       {/* Save Button */}
