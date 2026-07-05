@@ -84,15 +84,17 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!localStorage.getItem('admin_token')) { router.push('/admin/login'); return; }
-    adminApi.get<any>('/api/admin/settings')
-      .then(data => setSettings({
+    adminApi.get<{ settings: Record<string, string> }>('/api/admin/settings')
+      .then(res => {
+        const data = res.settings ?? {};
+        setSettings({
         ...DEFAULTS,
         business_name: data.brand_name ?? '',
         phone: data.contact_number ?? '',
         email: data.contact_email ?? '',
         address: data.address ?? '',
         business_postcode: data.business_postcode ?? '',
-        smtp_enabled: !!data.smtp_enabled,
+        smtp_enabled: data.smtp_enabled === '1',
         smtp_host: data.smtp_host ?? '',
         smtp_port: data.smtp_port ?? 587,
         smtp_username: data.smtp_username ?? '',
@@ -100,14 +102,15 @@ export default function SettingsPage() {
         smtp_encryption: data.smtp_encryption ?? 'tls',
         smtp_from_email: data.smtp_from_email ?? '',
         smtp_from_name: data.smtp_from_name ?? '',
-        vat_enabled: !!data.vat_enabled,
+        vat_enabled: data.vat_enabled === '1',
         vat_percentage: data.vat_percentage ?? 20,
-        platform_fee_enabled: !!data.platform_fee_enabled,
+        platform_fee_enabled: data.platform_fee_enabled === '1',
         platform_fee: data.platform_fee ?? 0,
-        tpms_charge_enabled: !!data.tpms_charge_enabled,
+        tpms_charge_enabled: data.tpms_charge_enabled === '1',
         tpms_charge: data.tpms_charge ?? 0,
         currency: data.currency ?? 'GBP',
-      }))
+      });
+      })
       .catch(() => showMsg('Failed to load settings', false))
       .finally(() => setLoading(false));
   }, [router]);
