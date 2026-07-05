@@ -7,8 +7,16 @@ type Order = {
   id: number; order_ref?: string; status: string; payment_status: string;
   amount: number; tyre_brand: string; tyre_model: string; tyre_size: string;
   tyre_quantity: number; vehicle_registration?: string; fitting_date?: string;
-  created_at: string; customer?: { name: string; email: string };
+  created_at: string;
+  user?: { name: string; email: string; phone?: string; address?: string };
 };
+
+function fmtDate(d?: string) {
+  if (!d) return '—';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return d;
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 const STATUS_STYLE: Record<string, string> = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -76,15 +84,16 @@ export default function OrdersPage() {
                   {o.order_ref ?? `#ORD-${String(o.id).padStart(3, '0')}`}
                 </td>
                 <td className="px-6 py-4 text-slate-600">
-                  <p>{o.customer?.name ?? 'Guest'}</p>
-                  {o.customer?.email && <p className="text-xs text-slate-400">{o.customer.email}</p>}
+                  <p className="font-medium">{o.user?.name ?? 'Guest'}</p>
+                  {o.user?.email && <p className="text-xs text-slate-400">{o.user.email}</p>}
+                  {o.user?.phone && <p className="text-xs text-slate-400">{o.user.phone}</p>}
                 </td>
                 <td className="px-6 py-4 font-mono text-slate-600 text-xs">{o.vehicle_registration ?? '—'}</td>
                 <td className="px-6 py-4 text-slate-600">
                   {o.tyre_brand} {o.tyre_model}<br />
                   <span className="text-xs text-slate-400">{o.tyre_size} × {o.tyre_quantity}</span>
                 </td>
-                <td className="px-6 py-4 text-slate-500 text-xs">{o.fitting_date ?? '—'}</td>
+                <td className="px-6 py-4 text-slate-500 text-xs">{fmtDate(o.fitting_date)}</td>
                 <td className="px-6 py-4">
                   <select
                     value={o.status}
