@@ -14,18 +14,31 @@ function fmt(date?: string) {
 }
 
 function SuccessInner() {
-  const params  = useSearchParams();
-  const orderId = params.get('order_id');
+  const params     = useSearchParams();
+  const orderId    = params.get('order_id');
+  const sessionId  = params.get('session_id');
   const [order, setOrder]     = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!orderId) { setLoading(false); return; }
-    api.get<{ order: Order }>(`/api/public/orders/${orderId}`)
-      .then(d => setOrder(d.order))
-      .catch(() => null)
-      .finally(() => setLoading(false));
-  }, [orderId]);
+
+    async function confirmAndLoad() {
+      // Call stripe-confirm to mark the order paid (fallback if webhook delayed)
+      if (sessionId) {
+        try {
+          await api.post(`/api/public/orders/${orderId}/stripe-confirm`, { session_id: sessionId });
+        } catch { /* webhook may have already handled it — ignore */ }
+      }
+      try {
+        const d = await api.get<{ order: Order }>(`/api/public/orders/${orderId}`);
+        setOrder(d.order);
+      } catch { /* ignore */ }
+      setLoading(false);
+    }
+
+    confirmAndLoad();
+  }, [orderId, sessionId]);
 
   if (loading) return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center">

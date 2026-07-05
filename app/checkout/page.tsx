@@ -119,7 +119,7 @@ function CheckoutInner() {
       });
       const orderId = order.order.id;
       const stripe = await api.post<{ url: string }>(`/api/public/orders/${orderId}/stripe-checkout`, {
-        success_url: `${window.location.origin}/checkout/success?order_id=${orderId}`,
+        success_url: `${window.location.origin}/checkout/success?order_id=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${window.location.origin}/booking`,
       });
       window.location.href = stripe.url;
