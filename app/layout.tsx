@@ -249,10 +249,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <div className="md:col-span-4">
                 <h4 className="text-white font-bold text-xs uppercase tracking-[0.15em] mb-5">Areas We Cover</h4>
                 <div className="flex flex-wrap gap-2">
-                  {['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Bedworth', 'Hinckley'].map(a => (
-                    <Link key={a} href="/areas"
+                  {[
+                    { name: 'Coventry', slug: 'coventry' },
+                    { name: 'Warwick', slug: 'warwick' },
+                    { name: 'Leamington Spa', slug: 'leamington-spa' },
+                    { name: 'Rugby', slug: 'rugby' },
+                    { name: 'Nuneaton', slug: 'nuneaton' },
+                    { name: 'Bedworth', slug: 'bedworth' },
+                    { name: 'Hinckley', slug: 'hinckley' },
+                  ].map(a => (
+                    <Link key={a.slug} href={`/areas/${a.slug}`}
                       className="text-xs text-gray-500 hover:text-white bg-white/4 hover:bg-white/8 border border-white/6 px-3 py-1.5 rounded-lg transition-all duration-150">
-                      {a}
+                      {a.name}
                     </Link>
                   ))}
                 </div>

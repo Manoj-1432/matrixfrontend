@@ -28,13 +28,13 @@ const PHONE = '07721570075';
 const WA    = 'https://wa.me/447721570075';
 
 const AREAS = [
-  { name: 'Coventry', postcodes: 'CV1–CV6', desc: 'Our home base. Fastest response times across all CV postcodes including city centre, Canley, Tile Hill, Binley, Willenhall and more.', highlight: true },
-  { name: 'Warwick', postcodes: 'CV34–CV35', desc: 'Full coverage across Warwick town centre, Warwick Gates and surrounding villages.' },
-  { name: 'Leamington Spa', postcodes: 'CV31–CV32', desc: 'Serving Royal Leamington Spa, Whitnash and Radford Semele.' },
-  { name: 'Rugby', postcodes: 'CV21–CV23', desc: 'Covering Rugby town, Hillmorton, New Bilton and surrounding areas.' },
-  { name: 'Nuneaton', postcodes: 'CV10–CV11', desc: 'Full coverage across Nuneaton, Camp Hill, Stockingford and nearby villages.' },
-  { name: 'Bedworth', postcodes: 'CV12', desc: 'Fast response to Bedworth, Exhall, Ash Green and surrounding postcodes.' },
-  { name: 'Hinckley', postcodes: 'LE10', desc: 'Covering Hinckley and the surrounding Leicestershire border areas.' },
+  { name: 'Coventry', slug: 'coventry', postcodes: 'CV1–CV6', desc: 'Our home base. Fastest response times across all CV postcodes including city centre, Canley, Tile Hill, Binley, Willenhall and more.', highlight: true },
+  { name: 'Warwick', slug: 'warwick', postcodes: 'CV34–CV35', desc: 'Full coverage across Warwick town centre, Warwick Gates and surrounding villages.' },
+  { name: 'Leamington Spa', slug: 'leamington-spa', postcodes: 'CV31–CV32', desc: 'Serving Royal Leamington Spa, Whitnash and Radford Semele.' },
+  { name: 'Rugby', slug: 'rugby', postcodes: 'CV21–CV23', desc: 'Covering Rugby town, Hillmorton, New Bilton and surrounding areas.' },
+  { name: 'Nuneaton', slug: 'nuneaton', postcodes: 'CV10–CV11', desc: 'Full coverage across Nuneaton, Camp Hill, Stockingford and nearby villages.' },
+  { name: 'Bedworth', slug: 'bedworth', postcodes: 'CV12', desc: 'Fast response to Bedworth, Exhall, Ash Green and surrounding postcodes.' },
+  { name: 'Hinckley', slug: 'hinckley', postcodes: 'LE10', desc: 'Covering Hinckley and the surrounding Leicestershire border areas.' },
 ];
 
 const FEATURES = [
@@ -104,8 +104,8 @@ export default function AreasPage() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {AREAS.map(a => (
-              <div key={a.name}
-                className={`rounded-2xl p-6 border transition-all hover:shadow-md ${a.highlight ? 'bg-[#0d1b3e] border-[#0d1b3e] text-white' : 'bg-white border-slate-100 text-slate-700'}`}>
+              <Link key={a.name} href={`/areas/${a.slug}`}
+                className={`rounded-2xl p-6 border transition-all hover:shadow-md hover:-translate-y-0.5 ${a.highlight ? 'bg-[#0d1b3e] border-[#0d1b3e] text-white' : 'bg-white border-slate-100 text-slate-700'}`}>
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2">
                     <svg className={`w-4 h-4 shrink-0 ${a.highlight ? 'text-green-400' : 'text-blue-500'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -121,7 +121,11 @@ export default function AreasPage() {
                 {a.highlight && (
                   <span className="inline-block mt-3 text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-2.5 py-1 rounded-full">Home Base</span>
                 )}
-              </div>
+                <div className={`mt-3 text-xs font-semibold flex items-center gap-1 ${a.highlight ? 'text-blue-300' : 'text-blue-600'}`}>
+                  View details
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
