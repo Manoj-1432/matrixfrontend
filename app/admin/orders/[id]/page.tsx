@@ -101,6 +101,31 @@ export default function AdminOrderDetailPage() {
           <span className={`text-xs font-bold px-3 py-1.5 rounded-full capitalize border ${PAYMENT_STYLE[order.payment_status ?? 'pending'] ?? 'bg-slate-100 text-slate-600'}`}>
             {order.payment_status ?? 'pending'}
           </span>
+          <a
+            href={`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/admin/orders/${order.id}/invoice`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => {
+              e.preventDefault();
+              const token = localStorage.getItem('admin_token');
+              fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/admin/orders/${order.id}/invoice`, {
+                headers: { Authorization: `Bearer ${token}` },
+              }).then(r => r.blob()).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `invoice-${order.order_ref ?? order.id}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+              });
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+            Download Invoice
+          </a>
         </div>
       </div>
 

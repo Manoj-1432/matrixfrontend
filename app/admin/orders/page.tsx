@@ -129,7 +129,33 @@ export default function OrdersPage() {
                     : <span className="inline-flex items-center gap-1 text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">Unpaid</span>
                   }
                 </td>
-                <td className="px-6 py-4 text-right font-bold text-slate-900">£{Number(o.amount).toFixed(2)}</td>
+                <td className="px-6 py-4 text-right font-bold text-slate-900">
+                  <div className="flex items-center justify-end gap-2">
+                    £{Number(o.amount).toFixed(2)}
+                    <button
+                      title="Download Invoice"
+                      onClick={e => {
+                        e.stopPropagation();
+                        const token = localStorage.getItem('admin_token');
+                        fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/admin/orders/${o.id}/invoice`, {
+                          headers: { Authorization: `Bearer ${token}` },
+                        }).then(r => r.blob()).then(blob => {
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `invoice-${o.order_ref ?? o.id}.pdf`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        });
+                      }}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
