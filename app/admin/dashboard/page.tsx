@@ -7,7 +7,7 @@ import Link from 'next/link';
 type Stats = { total_users: number; total_orders: number; total_vehicles: number; total_revenue: number };
 type OrderStat = { pending: number; processing: number; completed: number; cancelled: number };
 type DayData = { date: string; label: string; count: number };
-type RecentOrder = { id: number; order_ref: string; customer: string; vehicle: string; vehicle_registration: string; status: string; amount: number; created_at: string };
+type RecentOrder = { id: number; order_ref: string; customer: string; vehicle: string; vehicle_registration: string; status: string; payment_status: string; amount: number; created_at: string };
 type DashData = { stats: Stats; order_stats: OrderStat; orders_per_day: DayData[]; recent_orders: RecentOrder[] };
 
 const STATUS_STYLE: Record<string, string> = {
@@ -133,12 +133,13 @@ export default function DashboardPage() {
                 <th className="px-6 py-3 text-left">Customer</th>
                 <th className="px-6 py-3 text-left">Vehicle</th>
                 <th className="px-6 py-3 text-left">Status</th>
+                <th className="px-6 py-3 text-left">Payment</th>
                 <th className="px-6 py-3 text-right">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {recent_orders.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-10 text-center text-slate-400">No orders yet</td></tr>
+                <tr><td colSpan={6} className="px-6 py-10 text-center text-slate-400">No orders yet</td></tr>
               )}
               {recent_orders.map(o => (
                 <tr key={o.id} onClick={() => router.push(`/admin/orders/${o.id}`)} className="hover:bg-slate-50 transition-colors cursor-pointer">
@@ -149,6 +150,12 @@ export default function DashboardPage() {
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border capitalize ${STATUS_STYLE[o.status] ?? 'bg-slate-50 text-slate-600 border-slate-200'}`}>
                       {o.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    {o.payment_status === 'paid'
+                      ? <span className="inline-flex text-xs font-semibold bg-green-50 text-green-700 border border-green-200 px-2.5 py-0.5 rounded-full">✓ Paid</span>
+                      : <span className="inline-flex text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full">Unpaid</span>
+                    }
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-slate-900">£{Number(o.amount).toFixed(2)}</td>
                 </tr>

@@ -73,12 +73,13 @@ export default function OrdersPage() {
               <th className="px-6 py-3 text-left">Tyre</th>
               <th className="px-6 py-3 text-left">Fitting Date & Time</th>
               <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-left">Payment</th>
               <th className="px-6 py-3 text-right">Amount</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {orders.length === 0 && (
-              <tr><td colSpan={8} className="px-6 py-12 text-center text-slate-400">No orders yet</td></tr>
+              <tr><td colSpan={9} className="px-6 py-12 text-center text-slate-400">No orders yet</td></tr>
             )}
             {orders.map(o => (
               <tr key={o.id} onClick={e => { if ((e.target as HTMLElement).closest('select,button,a')) return; router.push(`/admin/orders/${o.id}`); }} className="hover:bg-slate-50 transition-colors cursor-pointer">
@@ -121,6 +122,12 @@ export default function OrdersPage() {
                       <option key={s} value={s} className="text-slate-800 bg-white">{s.charAt(0).toUpperCase() + s.slice(1)}</option>
                     ))}
                   </select>
+                </td>
+                <td className="px-6 py-4">
+                  {o.payment_status === 'paid'
+                    ? <span className="inline-flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full">✓ Paid</span>
+                    : <span className="inline-flex items-center gap-1 text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">Unpaid</span>
+                  }
                 </td>
                 <td className="px-6 py-4 text-right font-bold text-slate-900">£{Number(o.amount).toFixed(2)}</td>
               </tr>
