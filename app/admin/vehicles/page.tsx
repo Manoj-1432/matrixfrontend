@@ -167,7 +167,9 @@ export default function VehiclesPage() {
       setModal(null);
     } catch (e: unknown) {
       const err = e as { message?: string };
-      setFormErr(err?.message ?? 'Failed to save.');
+      const msg = err?.message ?? 'Failed to save.';
+      console.error('[Vehicles] save error:', e);
+      setFormErr(msg);
     } finally { setSaving(false); }
   }
 
