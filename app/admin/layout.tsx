@@ -136,6 +136,7 @@ function getPageTitle(pathname: string): string {
   if (pathname === '/admin/users') return 'Users';
   if (pathname === '/admin/settings') return 'Settings';
   if (pathname === '/admin/api-settings') return 'API Settings';
+  if (pathname.startsWith('/admin/vehicles')) return 'Vehicles';
   return 'Admin';
 }
 
