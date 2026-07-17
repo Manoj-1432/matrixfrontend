@@ -308,9 +308,8 @@ function CheckoutInner() {
                   </select>
                 </div>
                 <div>
-                  <label className={LABEL}>Price / tyre (£) *</label>
-                  <input type="number" required value={form.tyre_unit_price} placeholder="0.00" onChange={e => set('tyre_unit_price', e.target.value)} className={INPUT + err('tyre_unit_price')} />
-                  {fieldErrors.tyre_unit_price && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_unit_price[0]}</p>}
+                  <label className={LABEL}>Price / tyre (£)</label>
+                  <div className={INPUT + ' bg-slate-50 text-slate-700 cursor-default'}>£{Number(form.tyre_unit_price).toFixed(2)}</div>
                 </div>
               </div>
             </div>
