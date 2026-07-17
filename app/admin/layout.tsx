@@ -1,7 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { adminApi } from '@/lib/adminApi';
+
+type NotifOrder = { id: number; order_ref: string; customer: string; amount: number; status: string; created_at: string };
+type NotifData = { pending_count: number; recent_orders: NotifOrder[] };
 
 const SECTIONS = [
   {
@@ -57,6 +61,7 @@ type NavItem = {
   href?: string;
   label: string;
   icon: string;
+  badge?: number;
   sub?: { href: string; label: string }[];
 };
 
@@ -103,7 +108,12 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
       </svg>
-      {item.label}
+      <span className="flex-1">{item.label}</span>
+      {!!item.badge && (
+        <span className="shrink-0 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+          {item.badge > 99 ? '99+' : item.badge}
+        </span>
+      )}
     </Link>
   );
 }
@@ -129,9 +139,45 @@ function getPageTitle(pathname: string): string {
   return 'Admin';
 }
 
+function timeAgo(iso: string) {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [notif, setNotif] = useState<NotifData | null>(null);
+  const [bellOpen, setBellOpen] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (pathname === '/admin/login') return;
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
+
+    function fetchNotif() {
+      adminApi.get<NotifData>('/api/admin/orders/notifications')
+        .then(setNotif)
+        .catch(() => {});
+    }
+    fetchNotif();
+    const id = setInterval(fetchNotif, 60_000);
+    return () => clearInterval(id);
+  }, [pathname]);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setBellOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   if (pathname === '/admin/login') return <>{children}</>;
 
@@ -139,6 +185,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     localStorage.removeItem('admin_token');
     router.push('/admin/login');
   }
+
+  const pendingCount = notif?.pending_count ?? 0;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -155,9 +203,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {section.label}
               </p>
               <div className="flex flex-col gap-0.5">
-                {section.items.map(item => (
-                  <NavLink key={item.label} item={item as NavItem} pathname={pathname} />
-                ))}
+                {section.items.map(item => {
+                  const enriched: NavItem = item.label === 'Orders' && pendingCount > 0
+                    ? { ...item, badge: pendingCount } as NavItem
+                    : item as NavItem;
+                  return <NavLink key={item.label} item={enriched} pathname={pathname} />;
+                })}
               </div>
             </div>
           ))}
@@ -177,9 +228,70 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0">
         <header className="bg-white border-b border-slate-100 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
           <h1 className="text-slate-800 font-bold text-lg">{getPageTitle(pathname)}</h1>
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
-            Backend connected
+          <div className="flex items-center gap-4">
+            {/* Bell notification */}
+            <div className="relative" ref={bellRef}>
+              <button
+                onClick={() => setBellOpen(o => !o)}
+                className="relative p-2 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors"
+                aria-label="Notifications"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {pendingCount > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </button>
+              {bellOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                    <p className="font-bold text-slate-800 text-sm">Recent Orders</p>
+                    {pendingCount > 0 && (
+                      <span className="text-xs font-semibold bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded-full">
+                        {pendingCount} pending
+                      </span>
+                    )}
+                  </div>
+                  <div className="max-h-72 overflow-y-auto">
+                    {!notif || notif.recent_orders.length === 0 ? (
+                      <p className="px-4 py-6 text-center text-slate-400 text-sm">No orders in the last 24h</p>
+                    ) : (
+                      notif.recent_orders.map(o => (
+                        <button
+                          key={o.id}
+                          onClick={() => { router.push(`/admin/orders/${o.id}`); setBellOpen(false); }}
+                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 text-left"
+                        >
+                          <div>
+                            <p className="text-sm font-semibold text-slate-800">{o.order_ref}</p>
+                            <p className="text-xs text-slate-400">{o.customer} · {timeAgo(o.created_at)}</p>
+                          </div>
+                          <div className="text-right shrink-0 ml-2">
+                            <p className="text-sm font-bold text-slate-900">£{o.amount.toFixed(2)}</p>
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${o.status === 'pending' ? 'bg-amber-50 text-amber-700' : o.status === 'completed' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'}`}>
+                              {o.status}
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                  <div className="px-4 py-2.5 border-t border-slate-100">
+                    <button
+                      onClick={() => { router.push('/admin/orders'); setBellOpen(false); }}
+                      className="w-full text-center text-xs font-semibold text-blue-600 hover:underline"
+                    >
+                      View all orders →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
+              Backend connected
+            </div>
           </div>
         </header>
         <main className="flex-1 p-8">{children}</main>
