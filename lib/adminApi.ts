@@ -10,7 +10,6 @@ async function request<T>(path: string, options?: RequestInit, isFormData = fals
     },
     ...options,
   });
-  const json = await res.json();
   if (res.status === 401) {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('admin_token');
@@ -18,9 +17,11 @@ async function request<T>(path: string, options?: RequestInit, isFormData = fals
     }
     throw new Error('Unauthenticated');
   }
+  let json: Record<string, unknown> = {};
+  try { json = await res.json(); } catch { /* non-JSON body (e.g. 500 HTML) */ }
   if (!res.ok) {
-    const errors = json.errors ? ' — ' + Object.entries(json.errors).map(([k, v]) => `${k}: ${(v as string[]).join(', ')}`).join(' | ') : '';
-    throw new Error((json.message ?? 'Request failed') + errors);
+    const errors = json.errors ? ' — ' + Object.entries(json.errors as Record<string, string[]>).map(([k, v]) => `${k}: ${v.join(', ')}`).join(' | ') : '';
+    throw new Error(`[${res.status}] ` + (json.message as string ?? 'Server error') + errors);
   }
   return json.data as T;
 }
