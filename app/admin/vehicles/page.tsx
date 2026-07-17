@@ -120,7 +120,7 @@ export default function VehiclesPage() {
     setLookupStatus('loading');
     lookupTimer.current = setTimeout(async () => {
       try {
-        const res = await adminApi.get<{ registration: string; make: string; model: string; user_id: number | null; user_name: string | null; user_email: string | null } | null>(
+        const res = await adminApi.get<{ registration: string; make: string; model: string; year: number | null; user_id: number | null; user_name: string | null; user_email: string | null } | null>(
           `/api/admin/orders/vehicle-lookup?registration=${encodeURIComponent(upper)}`
         );
         if (res) {
@@ -128,6 +128,7 @@ export default function VehiclesPage() {
             ...f,
             make: res.make ?? f.make,
             model: res.model ?? f.model,
+            year: res.year ? String(res.year) : f.year,
           }));
           if (res.user_id && res.user_name) {
             setLinkedUser({ id: res.user_id, name: res.user_name, email: res.user_email ?? '' });

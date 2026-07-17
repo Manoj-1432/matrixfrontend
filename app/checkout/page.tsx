@@ -29,7 +29,7 @@ function CheckoutInner() {
     first_name: '', last_name: '', email: '', phone: '',
     address: '', city: '', postcode: '',
     vehicle_registration: '',
-    vehicle_make: '', vehicle_model: '',
+    vehicle_make: '', vehicle_model: '', vehicle_year: '',
     tyre_brand: params.get('tyre_brand') ?? '',
     tyre_model: params.get('tyre_model') ?? '',
     tyre_size: params.get('tyre_size') ?? '',
@@ -260,7 +260,7 @@ function CheckoutInner() {
                 <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">3</span>
                 Vehicle Details
               </h2>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
                   <label className={LABEL}>Reg Number</label>
                   <input type="text" value={form.vehicle_registration} placeholder="AB12 CDE" onChange={e => set('vehicle_registration', e.target.value)} className={INPUT} />
@@ -272,6 +272,10 @@ function CheckoutInner() {
                 <div>
                   <label className={LABEL}>Model</label>
                   <input type="text" value={form.vehicle_model} placeholder="Focus" onChange={e => set('vehicle_model', e.target.value)} className={INPUT} />
+                </div>
+                <div>
+                  <label className={LABEL}>Year</label>
+                  <input type="number" value={form.vehicle_year} placeholder="2020" min={1990} max={new Date().getFullYear() + 1} onChange={e => set('vehicle_year', e.target.value)} className={INPUT} />
                 </div>
               </div>
             </div>
