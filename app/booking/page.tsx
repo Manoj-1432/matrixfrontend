@@ -3,7 +3,7 @@ import BookingClient from './_booking-client';
 
 export const metadata: Metadata = {
   title: 'Book Mobile Tyre Fitting | Choose Your Slot | Matrix Mobile Tyres',
-  description: 'Choose a date and time slot for your mobile tyre fitting in Coventry. We come to you — home, work or roadside. Available 7 days a week, 8am–8pm.',
+  description: 'Choose a date and time slot for your mobile tyre fitting in Coventry. We come to you — home, work or roadside. Available 24/7, every day of the year.',
   keywords: [
     'book tyre fitting Coventry',
     'mobile tyre appointment Coventry',

@@ -11,7 +11,7 @@ const PHONE = '07721570075';
 const WA    = 'https://wa.me/447721570075';
 
 const FAQS = [
-  { q: 'What are your hours?', a: 'We operate 7 days a week including bank holidays, 8am–8pm. For emergencies call or WhatsApp anytime.' },
+  { q: 'What are your hours?', a: 'We operate 24/7, 365 days a year including bank holidays. Call or WhatsApp anytime.' },
   { q: 'Can you come out the same day?', a: 'In many cases yes. For same-day or emergency fitting, call or WhatsApp us directly rather than booking online.' },
   { q: 'Do you cover my area?', a: "We cover Coventry and all towns within 15 miles including Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley. If you're unsure, just ask." },
   { q: 'What if I have a problem with my order?', a: "Call or WhatsApp us directly and we'll sort it out straight away." },
@@ -52,7 +52,7 @@ export default function ContactPage() {
               </div>
               <h3 className="font-bold text-slate-900 mb-1">Call Us</h3>
               <p className="text-blue-600 font-bold mb-1">{PHONE}</p>
-              <p className="text-slate-400 text-xs">Tap to call · 7 days a week</p>
+              <p className="text-slate-400 text-xs">Tap to call · 24/7</p>
             </a>
 
             <a href={WA} target="_blank" rel="noopener noreferrer"
@@ -83,7 +83,7 @@ export default function ContactPage() {
           {/* Info row */}
           <div className="grid sm:grid-cols-3 gap-4 mb-12">
             {[
-              { label: 'Hours', value: 'Mon–Sun · 8am–8pm', sub: 'Emergency callouts available', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+              { label: 'Hours', value: '24/7 · Every day', sub: 'Including bank holidays', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
               { label: 'Coverage', value: '15-mile radius', sub: 'Coventry & surrounding areas', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
               { label: 'Response', value: '30–60 minutes', sub: 'For emergency callouts', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
             ].map(item => (
