@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://matrixmobiletyres.co.uk';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.matrixmobiletyresandautos.com';
 
 const AREA_SLUGS = ['coventry', 'warwick', 'leamington-spa', 'rugby', 'nuneaton', 'bedworth', 'hinckley'];
 
