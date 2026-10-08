@@ -10,6 +10,7 @@ const WA = 'https://wa.me/447721570075';
 const LINKS = [
   { href: '/', label: 'Home' },
   { href: '/tyres', label: 'Tyres' },
+  { href: '/shop', label: 'Our Shop' },
   { href: '/tpms', label: 'TPMS' },
   { href: '/areas', label: 'Areas' },
   { href: '/about', label: 'About' },
