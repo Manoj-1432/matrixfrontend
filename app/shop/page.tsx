@@ -1,24 +1,20 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import GoogleReviews from '@/components/GoogleReviews';
 
 export const metadata: Metadata = {
   title: 'Tyre Shop Coventry | Matrix Tyres & Autos | Unit 1 Bryant Road',
-  description: 'Visit Matrix Tyres & Autos in Coventry — Unit 1, Bryant Road, Exhall, CV7 9EN. Tyre fitting, wheel balancing, batteries & bulbs. Open Mon–Sun 8am–6pm.',
+  description: 'Visit Matrix Tyres & Autos in Coventry — Unit 1, Bryant Road, Exhall, CV7 9EN. Tyre fitting from £25, wheel balancing, batteries & bulbs. All major brands. Open Mon–Sun 8am–6pm.',
   keywords: [
-    'tyre shop Coventry',
-    'tyre fitting Coventry',
-    'wheel balancing Coventry',
-    'car batteries Coventry',
-    'bulb replacement Coventry',
-    'Matrix Tyres Autos Coventry',
-    'tyre garage Coventry',
-    'Exhall tyre shop',
-    'CV7 9EN tyres',
+    'tyre shop Coventry','tyre fitting Coventry','wheel balancing Coventry',
+    'car batteries Coventry','cheap tyres Coventry','Michelin tyres Coventry',
+    'Pirelli tyres Coventry','Continental tyres Coventry','budget tyres Coventry',
+    'Matrix Tyres Autos Coventry','tyre garage Coventry','Exhall tyre shop','CV7 9EN tyres',
   ],
   alternates: { canonical: '/shop' },
   openGraph: {
     title: 'Matrix Tyres & Autos | Tyre Shop Coventry',
-    description: 'Visit our tyre shop at Unit 1, Bryant Road, Exhall, Coventry CV7 9EN. Tyre fitting, wheel balancing, batteries & bulbs. Mon–Sun 8am–6pm.',
+    description: 'Tyre fitting from £25 · All major brands · Walk-ins welcome · Mon–Sun 8am–6pm · Unit 1, Bryant Road, Exhall, Coventry CV7 9EN',
     url: '/shop',
   },
 };
@@ -31,37 +27,46 @@ const SERVICES = [
   {
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
     title: 'Tyre Fitting',
-    desc: 'Full range of tyres fitted while you wait. Budget, mid-range and premium brands in stock for most vehicles.',
+    price: 'From £25',
+    desc: 'All tyre sizes fitted while you wait. Budget, mid-range and premium brands available. Most vehicles catered for.',
     color: '#2563eb',
   },
   {
     icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
     title: 'Wheel Balancing',
-    desc: 'Precision wheel balancing to eliminate vibration and ensure even tyre wear for a smoother, safer drive.',
+    price: 'Call for price',
+    desc: 'Precision balancing to eliminate vibration and ensure even tyre wear for a smoother, safer drive.',
     color: '#7c3aed',
   },
   {
     icon: 'M13 10V3L4 14h7v7l9-11h-7z',
     title: 'Car Batteries',
+    price: 'From £35',
     desc: 'Battery testing, supply and fitting. We stock batteries for all makes and models — fitted in minutes.',
     color: '#d97706',
   },
   {
     icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
     title: 'Bulb Replacement',
+    price: 'Call for price',
     desc: 'Headlights, brake lights, indicators and interior bulbs. Standard and LED upgrades available.',
     color: '#16a34a',
   },
 ];
+
+const PREMIUM_BRANDS = ['Michelin', 'Pirelli', 'Continental', 'Bridgestone', 'Goodyear', 'Dunlop'];
+const MID_BRANDS     = ['Hankook', 'Yokohama', 'Toyo', 'Falken', 'Cooper', 'Kumho', 'Avon', 'BFGoodrich'];
+const BUDGET_BRANDS  = ['Nexen', 'Sailun', 'Nankang', 'Accelera', 'Radar', 'Hifly', 'Landsail', 'Firemax'];
 
 const REASONS = [
   'Walk-in welcome — no appointment needed',
   'Most tyres fitted while you wait',
   'Competitive prices with no hidden charges',
   'Experienced, friendly technicians',
-  'Wide range of tyre brands in stock',
+  'All major tyre brands in stock',
   'Free tyre pressure check with every visit',
 ];
+
 
 export default function ShopPage() {
   return (
@@ -79,8 +84,8 @@ export default function ShopPage() {
               Coventry&apos;s local tyre shop
             </span>
           </h1>
-          <p className="text-blue-200/70 text-lg max-w-xl mb-8">
-            Visit us at Unit 1, Bryant Road, Exhall — walk-ins welcome, most jobs completed while you wait.
+          <p className="text-blue-200/70 text-lg max-w-xl mb-6">
+            Unit 1, Bryant Road, Exhall — walk-ins welcome, all major brands, tyre fitting from £25.
           </p>
           <div className="flex flex-wrap gap-3">
             <a href={MAPS} target="_blank" rel="noopener noreferrer"
@@ -100,12 +105,12 @@ export default function ShopPage() {
 
       {/* Info strip */}
       <section className="bg-white border-b border-slate-100 py-5 px-4">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', label: 'Address', value: 'Unit 1, Bryant Road, Exhall, CV7 9EN' },
             { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', label: 'Hours', value: 'Mon–Sun · 8am–6pm' },
             { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', label: 'Phone', value: PHONE },
-            { icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', label: 'Walk-ins', value: 'Always welcome' },
+            { icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', label: 'Fitting from', value: '£25 per tyre' },
           ].map(item => (
             <div key={item.label} className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
@@ -122,35 +127,94 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Services */}
+      {/* Services & Pricing */}
       <section className="py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-4">What We Offer</span>
-            <h2 className="text-3xl font-black text-slate-900">Shop services</h2>
-            <p className="text-slate-500 mt-3 max-w-xl mx-auto text-sm">Everything you need for your tyres and more — all under one roof at our Coventry workshop.</p>
+            <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-4">Services &amp; Pricing</span>
+            <h2 className="text-3xl font-black text-slate-900">What we offer</h2>
+            <p className="text-slate-500 mt-3 max-w-xl mx-auto text-sm">Transparent pricing, no hidden fees — everything your car needs under one roof.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {SERVICES.map(s => (
-              <div key={s.title} className="bg-white border border-slate-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+              <div key={s.title} className="bg-white border border-slate-100 rounded-2xl p-6 hover:shadow-md transition-shadow flex flex-col">
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: `${s.color}15` }}>
                   <svg className="w-5 h-5" style={{ color: s.color }} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d={s.icon} />
                   </svg>
                 </div>
-                <h3 className="font-bold text-slate-900 mb-2">{s.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{s.desc}</p>
+                <h3 className="font-bold text-slate-900 mb-1">{s.title}</h3>
+                <p className="text-lg font-black mb-2" style={{ color: s.color }}>{s.price}</p>
+                <p className="text-slate-500 text-sm leading-relaxed flex-1">{s.desc}</p>
+                <a href={`tel:${PHONE}`} className="mt-4 text-xs font-bold text-center py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+                  Call to book
+                </a>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Tyre Brands */}
+      <section className="py-20 px-4 bg-white border-y border-slate-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-4">Tyre Brands</span>
+            <h2 className="text-3xl font-black text-slate-900">All major brands in stock</h2>
+            <p className="text-slate-500 mt-3 max-w-xl mx-auto text-sm">From premium European brands to quality budget options — we carry tyres to suit every vehicle and budget.</p>
+          </div>
+
+          <div className="flex flex-col gap-8">
+            {/* Premium */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="bg-yellow-50 text-yellow-700 border border-yellow-200 text-xs font-bold px-3 py-1 rounded-full">Premium</span>
+                <div className="h-px flex-1 bg-slate-100" />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {PREMIUM_BRANDS.map(b => (
+                  <span key={b} className="bg-slate-900 text-white text-sm font-bold px-4 py-2 rounded-xl">{b}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Mid-range */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1 rounded-full">Mid-Range</span>
+                <div className="h-px flex-1 bg-slate-100" />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {MID_BRANDS.map(b => (
+                  <span key={b} className="bg-blue-50 text-blue-800 border border-blue-100 text-sm font-bold px-4 py-2 rounded-xl">{b}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Budget */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="bg-green-50 text-green-700 border border-green-200 text-xs font-bold px-3 py-1 rounded-full">Budget</span>
+                <div className="h-px flex-1 bg-slate-100" />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {BUDGET_BRANDS.map(b => (
+                  <span key={b} className="bg-green-50 text-green-800 border border-green-100 text-sm font-bold px-4 py-2 rounded-xl">{b}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-slate-400 text-xs mt-8">Don&apos;t see your brand? Call us — we can source almost any tyre.</p>
+        </div>
+      </section>
+
+      {/* Reviews — live from Google */}
+      <GoogleReviews />
+
       {/* Map + reasons */}
       <section className="py-20 px-4 bg-white border-y border-slate-100">
         <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 items-start">
-
-          {/* Map embed */}
           <div>
             <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-5">Find Us</span>
             <h2 className="text-2xl font-black text-slate-900 mb-2">Unit 1, Bryant Road</h2>
@@ -158,11 +222,8 @@ export default function ShopPage() {
             <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style={{ height: 280 }}>
               <iframe
                 title="Matrix Tyres & Autos location"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
+                width="100%" height="100%" style={{ border: 0 }}
+                loading="lazy" allowFullScreen
                 src="https://maps.google.com/maps?q=Unit+1+Bryant+Road+Exhall+Coventry+CV7+9EN&output=embed"
               />
             </div>
@@ -172,8 +233,6 @@ export default function ShopPage() {
               Open in Google Maps
             </a>
           </div>
-
-          {/* Why visit */}
           <div>
             <span className="inline-block bg-green-50 text-green-700 text-xs font-bold uppercase tracking-[0.18em] px-4 py-1.5 rounded-full mb-5">Why Visit Us</span>
             <h2 className="text-2xl font-black text-slate-900 mb-6">Your local tyre experts</h2>
@@ -192,20 +251,20 @@ export default function ShopPage() {
             <div className="mt-8 bg-slate-50 border border-slate-100 rounded-2xl p-5">
               <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Opening Hours</p>
               <p className="font-bold text-slate-900">Monday – Sunday</p>
-              <p className="text-slate-500 text-sm">8:00am – 6:00pm</p>
-              <p className="text-xs text-slate-400 mt-2">Including bank holidays</p>
+              <p className="text-slate-500 text-sm">8:00am – 6:00pm · Including bank holidays</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Also need mobile? */}
+      {/* Mobile fitting CTA */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-6">
+          <div className="rounded-2xl p-8 flex flex-col sm:flex-row items-center gap-6"
+            style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
             <div className="flex-1 text-white">
               <h3 className="text-xl font-black mb-2">Need us to come to you?</h3>
-              <p className="text-indigo-100 text-sm">We also offer a 24/7 mobile tyre fitting service — we come to your home, workplace or roadside across Coventry and surrounding areas.</p>
+              <p className="text-indigo-100 text-sm">We also offer a 24/7 mobile tyre fitting service across Coventry and surrounding areas.</p>
             </div>
             <div className="flex flex-col gap-3 shrink-0">
               <Link href="/tyres"
