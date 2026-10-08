@@ -80,6 +80,32 @@ export default function ContactPage() {
             </Link>
           </div>
 
+          {/* Shop location card */}
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 mb-6 flex flex-col sm:flex-row gap-6 items-start">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0">
+              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-black text-slate-900 text-lg">Visit Our Shop</h3>
+                <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-100">Matrix Tyres & Autos</span>
+              </div>
+              <p className="text-slate-700 font-semibold mb-0.5">Unit 1, Bryant Road, Exhall, Coventry, CV7 9EN</p>
+              <p className="text-slate-500 text-sm mb-3">Mon–Sun · 8am–6pm &nbsp;|&nbsp; Tyre fitting · Wheel balancing · Batteries · Bulbs</p>
+              <a
+                href="https://maps.google.com/?q=Unit+1+Bryant+Road+Exhall+Coventry+CV7+9EN"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Get directions
+              </a>
+            </div>
+          </div>
+
           {/* Info row */}
           <div className="grid sm:grid-cols-3 gap-4 mb-12">
             {[

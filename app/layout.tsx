@@ -87,9 +87,9 @@ export const metadata: Metadata = {
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'AutoRepair',
-  name: 'Matrix Mobile Tyres',
+  name: 'Matrix Tyres and Autos',
   description:
-    'Professional mobile tyre fitting service covering Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley. We come to you at home, work or roadside.',
+    'Professional tyre fitting, wheel balancing, batteries and bulbs at our Coventry shop plus mobile tyre fitting across Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley.',
   url: BASE,
   telephone: `+44${PHONE.replace(/^0/, '')}`,
   priceRange: '££',
@@ -97,8 +97,10 @@ const localBusinessSchema = {
   logo: `${BASE}/logo.png`,
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Coventry',
+    streetAddress: 'Unit 1, Bryant Road',
+    addressLocality: 'Exhall, Coventry',
     addressRegion: 'West Midlands',
+    postalCode: 'CV7 9EN',
     addressCountry: 'GB',
   },
   geo: {
@@ -119,18 +121,21 @@ const localBusinessSchema = {
     {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      opens: '00:00',
-      closes: '23:59',
+      opens: '08:00',
+      closes: '18:00',
     },
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Mobile Tyre Services',
+    name: 'Tyre & Auto Services',
     itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Tyre Fitting' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Wheel Balancing' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Car Batteries' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Bulb Replacement' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Mobile Tyre Fitting' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'TPMS Sensor Reset & Replacement' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Emergency Tyre Callout' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Same Day Tyre Fitting' } },
     ],
   },
   sameAs: [
@@ -180,9 +185,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               {/* Brand — wider column */}
               <div className="md:col-span-4">
                 <Image src="/logo.png" alt="Matrix Mobile Tyres — Mobile Tyre Fitting Coventry" width={160} height={64} className="h-11 w-auto mb-5 brightness-0 invert opacity-90" />
-                <p className="text-sm text-gray-500 leading-relaxed mb-6 max-w-[260px]">
-                  Coventry&apos;s trusted mobile tyre fitting specialists. We come to you — home, work or roadside — 7 days a week.
+                <p className="text-sm text-gray-500 leading-relaxed mb-4 max-w-[260px]">
+                  Coventry&apos;s trusted tyre specialists — visit our shop or we come to you at home, work or roadside.
                 </p>
+                <div className="flex items-start gap-2.5 text-gray-500 text-sm mb-4">
+                  <span className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
+                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  </span>
+                  <span className="leading-relaxed">Unit 1, Bryant Road, Exhall<br />Coventry, CV7 9EN<br /><span className="text-gray-600 text-xs">Shop: Mon–Sun · 8am–6pm</span></span>
+                </div>
                 <div className="flex flex-col gap-3 text-sm">
                   <a href={`tel:${PHONE}`} className="flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors font-medium group">
                     <span className="w-7 h-7 rounded-lg bg-green-500/15 flex items-center justify-center shrink-0 group-hover:bg-green-500/25 transition-colors">
@@ -220,11 +231,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <h4 className="text-white font-bold text-xs uppercase tracking-[0.15em] mb-5">Services</h4>
                 <div className="flex flex-col gap-2.5 text-sm text-gray-500">
                   {[
-                    { href: '/tyres', label: 'Mobile Tyre Fitting' },
+                    { href: '/tyres', label: 'Tyre Fitting' },
+                    { href: '/tyres', label: 'Wheel Balancing' },
                     { href: '/tpms', label: 'TPMS Diagnostic' },
-                    { href: '/tyres', label: 'Book a Fitting' },
+                    { href: '/contact', label: 'Batteries & Bulbs' },
                     { href: '/contact', label: 'Emergency Callout' },
-                    { href: '/contact', label: 'Same Day Fitting' },
                   ].map(l => (
                     <Link key={l.label} href={l.href} className="hover:text-white transition-colors hover:translate-x-0.5 inline-block transition-transform duration-150">{l.label}</Link>
                   ))}
