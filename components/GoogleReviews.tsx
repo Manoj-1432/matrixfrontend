@@ -43,11 +43,11 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
   );
 }
 
-export default function GoogleReviews() {
+export default function GoogleReviews({ type = 'mobile' }: { type?: 'mobile' | 'shop' }) {
   const [data, setData] = useState<ReviewsData | null>(null);
 
   useEffect(() => {
-    fetch(`${BASE}/api/public/reviews`, { headers: { Accept: 'application/json' } })
+    fetch(`${BASE}/api/public/reviews?type=${type}`, { headers: { Accept: 'application/json' } })
       .then(r => r.json())
       .then(j => setData(j.data))
       .catch(() => null);

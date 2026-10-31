@@ -209,8 +209,8 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Reviews — live from Google */}
-      <GoogleReviews />
+      {/* Reviews — live from Google (shop listing) */}
+      <GoogleReviews type="shop" />
 
       {/* Map + reasons */}
       <section className="py-20 px-4 bg-white border-y border-slate-100">
