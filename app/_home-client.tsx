@@ -254,6 +254,7 @@ export default function Home() {
                       <select
                         value={f.val}
                         onChange={e => f.set(e.target.value)}
+                        aria-label={f.label}
                         className="w-full border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-50 rounded-lg px-3 py-2.5 text-sm text-slate-700 bg-white outline-none transition-all cursor-pointer"
                       >
                         <option value="">—</option>
