@@ -1,12 +1,12 @@
-import { MetadataRoute } from 'next';
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://matrixmobiletyres.co.uk';
+import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      { userAgent: '*', allow: '/', disallow: ['/admin/', '/account/', '/checkout/'] },
-    ],
-    sitemap: `${BASE}/sitemap.xml`,
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/admin', '/admin/', '/account', '/account/', '/api/'],
+    },
+    sitemap: 'https://www.matrixmobiletyresandautos.com/sitemap.xml',
   };
 }
