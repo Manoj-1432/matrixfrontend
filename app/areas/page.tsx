@@ -4,7 +4,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
   title: 'Areas We Cover | Mobile Tyre Fitting Coventry & Surrounding Areas',
-  description: 'Matrix Mobile Tyres covers Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley. Mobile tyre fitting within a 15-mile radius, 7 days a week, emergency callouts available.',
+  description: 'Matrix Mobile Tyres covers Coventry and all towns within 15 miles — Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth, Hinckley, Kenilworth, Solihull, Coleshill, Atherstone, Tamworth, Sutton Coldfield, Meriden and Lutterworth.',
   keywords: [
     'mobile tyre fitting areas Coventry',
     'mobile tyre fitting Warwick',
@@ -13,6 +13,14 @@ export const metadata: Metadata = {
     'mobile tyre fitting Nuneaton',
     'mobile tyre fitting Bedworth',
     'mobile tyre fitting Hinckley',
+    'mobile tyre fitting Kenilworth',
+    'mobile tyre fitting Solihull',
+    'mobile tyre fitting Coleshill',
+    'mobile tyre fitting Atherstone',
+    'mobile tyre fitting Tamworth',
+    'mobile tyre fitting Sutton Coldfield',
+    'mobile tyre fitting Meriden',
+    'mobile tyre fitting Lutterworth',
     'tyre fitting near me Coventry',
     'mobile tyre coverage Coventry',
   ],
@@ -29,12 +37,20 @@ const WA    = 'https://wa.me/447721570075';
 
 const AREAS = [
   { name: 'Coventry', slug: 'coventry', postcodes: 'CV1–CV6', desc: 'Our home base. Fastest response times across all CV postcodes including city centre, Canley, Tile Hill, Binley, Willenhall and more.', highlight: true },
+  { name: 'Bedworth', slug: 'bedworth', postcodes: 'CV12', desc: 'Fast response to Bedworth, Exhall, Ash Green and surrounding postcodes. Our shop is in Exhall.' },
+  { name: 'Kenilworth', slug: 'kenilworth', postcodes: 'CV8', desc: 'Serving Kenilworth, Balsall Common, Burton Green and the wider CV8 postcode — just 5 miles away.' },
+  { name: 'Meriden', slug: 'meriden', postcodes: 'CV7', desc: 'Covering Meriden, Berkswell, Allesley and the CV7 postcode area. Our shop is also in this postcode.' },
+  { name: 'Nuneaton', slug: 'nuneaton', postcodes: 'CV10–CV11', desc: 'Full coverage across Nuneaton, Camp Hill, Stockingford and nearby villages.' },
+  { name: 'Solihull', slug: 'solihull', postcodes: 'B90–B93', desc: 'Covering Solihull, Shirley, Olton, Dorridge and all surrounding West Midlands areas.' },
+  { name: 'Coleshill', slug: 'coleshill', postcodes: 'B46', desc: 'Serving Coleshill, Water Orton, Shustoke and the B46 postcode. Great for M6/M42 roadside callouts.' },
   { name: 'Warwick', slug: 'warwick', postcodes: 'CV34–CV35', desc: 'Full coverage across Warwick town centre, Warwick Gates and surrounding villages.' },
   { name: 'Leamington Spa', slug: 'leamington-spa', postcodes: 'CV31–CV32', desc: 'Serving Royal Leamington Spa, Whitnash and Radford Semele.' },
   { name: 'Rugby', slug: 'rugby', postcodes: 'CV21–CV23', desc: 'Covering Rugby town, Hillmorton, New Bilton and surrounding areas.' },
-  { name: 'Nuneaton', slug: 'nuneaton', postcodes: 'CV10–CV11', desc: 'Full coverage across Nuneaton, Camp Hill, Stockingford and nearby villages.' },
-  { name: 'Bedworth', slug: 'bedworth', postcodes: 'CV12', desc: 'Fast response to Bedworth, Exhall, Ash Green and surrounding postcodes.' },
-  { name: 'Hinckley', slug: 'hinckley', postcodes: 'LE10', desc: 'Covering Hinckley and the surrounding Leicestershire border areas.' },
+  { name: 'Hinckley', slug: 'hinckley', postcodes: 'LE10', desc: 'Covering Hinckley, Burbage, Barwell and Earl Shilton in Leicestershire.' },
+  { name: 'Lutterworth', slug: 'lutterworth', postcodes: 'LE17', desc: 'Serving Lutterworth, Ullesthorpe and the LE17 postcode near the M1/M6 interchange.' },
+  { name: 'Atherstone', slug: 'atherstone', postcodes: 'CV9', desc: 'Covering Atherstone, Mancetter, Polesworth and north Warwickshire villages.' },
+  { name: 'Sutton Coldfield', slug: 'sutton-coldfield', postcodes: 'B72–B76', desc: 'Serving Sutton Coldfield, Four Oaks, Mere Green, Walmley and surrounding areas.' },
+  { name: 'Tamworth', slug: 'tamworth', postcodes: 'B77–B79', desc: 'Covering Tamworth, Fazeley, Amington and Wilnecote at the edge of our 15-mile radius.' },
 ];
 
 const FEATURES = [
@@ -90,7 +106,7 @@ export default function AreasPage() {
             />
           </div>
           <p className="text-center text-xs text-slate-400 mt-3">
-            We cover Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth &amp; Hinckley — approximately 15 miles from Coventry city centre
+            We cover Coventry and all towns within 15 miles — including Solihull, Kenilworth, Nuneaton, Rugby, Warwick, Leamington Spa, Sutton Coldfield, Tamworth, Atherstone, Hinckley, Lutterworth, Coleshill and more.
           </p>
         </div>
       </section>

@@ -2,7 +2,11 @@ import { MetadataRoute } from 'next';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.matrixmobiletyresandautos.com';
 
-const AREA_SLUGS = ['coventry', 'warwick', 'leamington-spa', 'rugby', 'nuneaton', 'bedworth', 'hinckley'];
+const AREA_SLUGS = [
+  'coventry', 'bedworth', 'kenilworth', 'meriden', 'nuneaton',
+  'solihull', 'coleshill', 'warwick', 'leamington-spa', 'rugby',
+  'hinckley', 'lutterworth', 'atherstone', 'sutton-coldfield', 'tamworth',
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
