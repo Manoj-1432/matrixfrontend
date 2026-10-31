@@ -16,31 +16,33 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://matrixmobiletyres.co.u
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
-    default: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry & Surrounding Areas',
-    template: '%s | Matrix Mobile Tyres Coventry',
+    default: 'Matrix Mobile Tyres & Autos | Tyre Fitting Coventry — Mobile & Shop',
+    template: '%s | Matrix Tyres Coventry',
   },
   description:
-    'Matrix Mobile Tyres — professional mobile tyre fitting in Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth & Hinckley. We come to you at home, work or roadside. 7 days a week, same-day available. Book online now.',
+    'Matrix Mobile Tyres & Autos — mobile tyre fitting across Coventry 24/7, plus our tyre shop at Unit 1 Bryant Road, Exhall CV7 9EN. Tyre fitting from £25. All major brands. Same-day available.',
   keywords: [
     'mobile tyre fitting Coventry',
-    'mobile tyres Coventry',
+    'tyre shop Coventry',
+    'Matrix Mobile Tyres',
+    'Matrix Tyres and Autos',
     'tyre fitting at home Coventry',
     'mobile tyre fitter Coventry',
     'emergency tyre fitting Coventry',
+    'tyre fitting Exhall',
     'mobile tyre fitting Warwick',
     'mobile tyre fitting Leamington Spa',
     'mobile tyre fitting Rugby',
     'mobile tyre fitting Nuneaton',
     'tyre fitting near me Coventry',
-    'mobile tyre replacement Coventry',
     'TPMS reset Coventry',
-    'cheap mobile tyre fitting Coventry',
+    'cheap tyre fitting Coventry',
     'same day tyre fitting Coventry',
-    'Matrix Mobile Tyres',
+    'CV7 9EN tyres',
   ],
-  authors: [{ name: 'Matrix Mobile Tyres', url: BASE }],
-  creator: 'Matrix Mobile Tyres',
-  publisher: 'Matrix Mobile Tyres',
+  authors: [{ name: 'Matrix Mobile Tyres & Autos', url: BASE }],
+  creator: 'Matrix Mobile Tyres & Autos',
+  publisher: 'Matrix Mobile Tyres & Autos',
   category: 'Automotive Services',
   alternates: {
     canonical: '/',
@@ -49,10 +51,10 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_GB',
     url: BASE,
-    siteName: 'Matrix Mobile Tyres',
-    title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry',
+    siteName: 'Matrix Mobile Tyres & Autos',
+    title: 'Matrix Mobile Tyres & Autos | Tyre Fitting Coventry',
     description:
-      'Mobile tyre fitting in Coventry & surrounding areas. We come to you — home, work or roadside. Same-day available, 7 days a week. Book online.',
+      'Mobile tyre fitting 24/7 across Coventry & tyre shop at Exhall CV7 9EN. Fitting from £25. All major brands. Same-day available.',
     images: [
       {
         url: '/og-image.jpg',
@@ -64,8 +66,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry',
-    description: 'Mobile tyre fitting in Coventry & surrounding areas. We come to you 7 days a week.',
+    title: 'Matrix Mobile Tyres & Autos | Tyre Fitting Coventry',
+    description: 'Mobile tyre fitting 24/7 across Coventry & tyre shop at Exhall CV7 9EN. Fitting from £25.',
     images: ['/og-image.jpg'],
   },
   robots: {

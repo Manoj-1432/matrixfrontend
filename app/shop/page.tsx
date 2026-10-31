@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import GoogleReviews from '@/components/GoogleReviews';
 
 export const metadata: Metadata = {
-  title: 'Tyre Shop Coventry | Matrix Tyres & Autos | Unit 1 Bryant Road',
+  title: 'Tyre Shop Coventry | Unit 1 Bryant Road, Exhall',
   description: 'Visit Matrix Tyres & Autos in Coventry — Unit 1, Bryant Road, Exhall, CV7 9EN. Tyre fitting from £25, wheel balancing, batteries & bulbs. All major brands. Open Mon–Sun 8am–6pm.',
   keywords: [
     'tyre shop Coventry','tyre fitting Coventry','wheel balancing Coventry',
