@@ -11,13 +11,22 @@ const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 const PHONE = '07721570075';
 const WA = 'https://wa.me/447721570075';
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://matrixmobiletyres.co.uk';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.matrixmobiletyresandautos.com';
+
+// Names and coordinates must match the two Google Business Profiles exactly.
+const SHOP_NAME = 'Matrix Tyres and Autos';
+const MOBILE_NAME = 'Matrix 24/7 Mobile Tyres and Roadside Assistance';
+const SHOP_LAT = 52.464759;
+const SHOP_LNG = -1.479909;
+const SHOP_MAPS = 'https://www.google.com/maps/place/?q=place_id:ChIJ323me3ZNd0gRiaHLpZgOo6c';
+const MOBILE_MAPS = 'https://www.google.com/maps/place/?q=place_id:ChIJlXLWRoslv6gROprctmA7iOs';
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
     default: 'Matrix Mobile Tyres & Autos | Tyre Fitting Coventry — Mobile & Shop',
-    template: '%s | Matrix Tyres Coventry',
+    // Every page title already names the business, so don't append it again.
+    template: '%s',
   },
   description:
     'Matrix Mobile Tyres & Autos — mobile tyre fitting across Coventry 24/7, plus our tyre shop at Unit 1 Bryant Road, Exhall CV7 9EN. Tyre fitting from £25. All major brands. Same-day available.',
@@ -86,62 +95,71 @@ export const metadata: Metadata = {
   },
 };
 
+const TELEPHONE = `+44${PHONE.replace(/^0/, '')}`;
+const AREAS_SERVED = ['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Bedworth', 'Hinckley']
+  .map(name => ({ '@type': 'City', name }));
+const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const offer = (name: string) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } });
+
+// Two businesses, matching the two Google Business Profiles:
+// the Exhall tyre shop and the 24/7 mobile service (a service-area business, no public address).
 const localBusinessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'AutoRepair',
-  name: 'Matrix Tyres and Autos',
-  description:
-    'Professional tyre fitting, wheel balancing, batteries and bulbs at our Coventry shop plus mobile tyre fitting across Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley.',
-  url: BASE,
-  telephone: `+44${PHONE.replace(/^0/, '')}`,
-  priceRange: '££',
-  image: `${BASE}/logo.png`,
-  logo: `${BASE}/logo.png`,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Unit 1, Bryant Road',
-    addressLocality: 'Exhall, Coventry',
-    addressRegion: 'West Midlands',
-    postalCode: 'CV7 9EN',
-    addressCountry: 'GB',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 52.4081,
-    longitude: -1.5199,
-  },
-  areaServed: [
-    { '@type': 'City', name: 'Coventry' },
-    { '@type': 'City', name: 'Warwick' },
-    { '@type': 'City', name: 'Leamington Spa' },
-    { '@type': 'City', name: 'Rugby' },
-    { '@type': 'City', name: 'Nuneaton' },
-    { '@type': 'City', name: 'Bedworth' },
-    { '@type': 'City', name: 'Hinckley' },
-  ],
-  openingHoursSpecification: [
+  '@graph': [
     {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      opens: '08:00',
-      closes: '18:00',
+      '@type': 'AutoRepair',
+      '@id': `${BASE}/#shop`,
+      name: SHOP_NAME,
+      description:
+        'Tyre shop in Exhall, Coventry: tyre fitting, wheel balancing, car batteries, bulbs and TPMS sensor reset.',
+      url: `${BASE}/shop`,
+      telephone: TELEPHONE,
+      priceRange: '££',
+      image: `${BASE}/logo.png`,
+      logo: `${BASE}/logo.png`,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Unit 1, Bryant Road',
+        addressLocality: 'Exhall, Coventry',
+        addressRegion: 'West Midlands',
+        postalCode: 'CV7 9EN',
+        addressCountry: 'GB',
+      },
+      geo: { '@type': 'GeoCoordinates', latitude: SHOP_LAT, longitude: SHOP_LNG },
+      hasMap: SHOP_MAPS,
+      openingHoursSpecification: [
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ALL_DAYS, opens: '08:00', closes: '18:00' },
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Tyre Shop Services',
+        itemListElement: ['Tyre Fitting', 'Wheel Balancing', 'Car Batteries', 'Bulb Replacement', 'TPMS Sensor Reset & Replacement'].map(offer),
+      },
+      sameAs: [SHOP_MAPS],
     },
-  ],
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: 'Tyre & Auto Services',
-    itemListElement: [
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Tyre Fitting' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Wheel Balancing' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Car Batteries' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Bulb Replacement' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Mobile Tyre Fitting' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'TPMS Sensor Reset & Replacement' } },
-      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Emergency Tyre Callout' } },
-    ],
-  },
-  sameAs: [
-    `https://wa.me/447721570075`,
+    {
+      '@type': 'AutoRepair',
+      '@id': `${BASE}/#mobile`,
+      name: MOBILE_NAME,
+      description:
+        'Mobile tyre fitting and roadside assistance 24/7 across Coventry, Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley — at your home, work or roadside.',
+      url: BASE,
+      telephone: TELEPHONE,
+      priceRange: '££',
+      image: `${BASE}/logo.png`,
+      logo: `${BASE}/logo.png`,
+      areaServed: AREAS_SERVED,
+      hasMap: MOBILE_MAPS,
+      openingHoursSpecification: [
+        { '@type': 'OpeningHoursSpecification', dayOfWeek: ALL_DAYS, opens: '00:00', closes: '23:59' },
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Mobile Tyre Services',
+        itemListElement: ['Mobile Tyre Fitting', 'Emergency Tyre Callout', 'Roadside Assistance', 'Car Batteries', 'TPMS Sensor Reset & Replacement'].map(offer),
+      },
+      sameAs: [MOBILE_MAPS, WA],
+    },
   ],
 };
 
@@ -166,10 +184,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <meta name="theme-color" content="#0d1b3e" />
-        <meta name="geo.region" content="GB-COV" />
-        <meta name="geo.placename" content="Coventry" />
-        <meta name="geo.position" content="52.4081;-1.5199" />
-        <meta name="ICBM" content="52.4081, -1.5199" />
+        <meta name="geo.region" content="GB-WAR" />
+        <meta name="geo.placename" content="Exhall, Coventry" />
+        <meta name="geo.position" content={`${SHOP_LAT};${SHOP_LNG}`} />
+        <meta name="ICBM" content={`${SHOP_LAT}, ${SHOP_LNG}`} />
       </head>
       <body className="flex flex-col min-h-screen antialiased">
         <Navbar />

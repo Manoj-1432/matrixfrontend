@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import ScrollToTop from '@/components/ScrollToTop';
 
 export const metadata: Metadata = {
-  title: 'Areas We Cover | Mobile Tyre Fitting Coventry & Surrounding Areas',
+  title: 'Areas We Cover | Mobile Tyre Fitting Coventry & Surrounding Areas | Matrix Mobile Tyres',
   description: 'Matrix Mobile Tyres covers Coventry and all towns within 15 miles — Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth, Hinckley, Kenilworth, Solihull, Coleshill, Atherstone, Tamworth, Sutton Coldfield, Meriden and Lutterworth.',
   keywords: [
     'mobile tyre fitting areas Coventry',

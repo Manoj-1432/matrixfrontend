@@ -213,16 +213,8 @@ function TyresInner() {
 
   return (
     <>
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero bar */}
-      <div className="bg-[#0d1b3e] text-white py-12 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-blue-400 text-xs font-bold uppercase tracking-[0.18em] mb-3">Tyre Search</p>
-          <h1 className="text-3xl lg:text-4xl font-black mb-3">Find Tyres for Your Car</h1>
-          <p className="text-blue-200/70 text-sm max-w-md mx-auto">Search by registration number or enter your tyre size manually to see matching tyres and prices.</p>
-        </div>
-      </div>
-
+    <div className="bg-slate-50">
+      {/* The hero heading is rendered on the server in ./page.tsx so search engines can read it. */}
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Search card */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
