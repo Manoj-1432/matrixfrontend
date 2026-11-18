@@ -12,6 +12,7 @@ const LINKS = [
   { href: '/tyres', label: 'Tyres' },
   { href: '/shop', label: 'Our Shop' },
   { href: '/tpms', label: 'TPMS' },
+  { href: '/batteries', label: 'Batteries' },
   { href: '/areas', label: 'Areas' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
