@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Cookie Policy | Matrix Mobile Tyres',
-  description: 'Cookie policy for Matrix Mobile Tyres — we only use essential cookies.',
+  description: 'Cookie policy for Matrix Mobile Tyres — essential cookies, plus optional Google Ads cookies with your consent.',
   robots: { index: false },
 };
 
@@ -25,7 +25,7 @@ export default function CookiesPage() {
             </section>
             <section>
               <h2 className="text-lg font-bold text-slate-900 mb-2">What cookies do we use?</h2>
-              <p className="mb-3">We only use <strong>essential cookies</strong> — cookies that are strictly necessary for the website to function. We do not use tracking, advertising or analytics cookies.</p>
+              <p className="mb-3">We use <strong>essential cookies</strong> that are strictly necessary for the website to function. If you click &quot;Accept&quot; on our cookie banner, we also use <strong>Google Ads cookies</strong> to measure how well our adverts work (for example, whether someone who clicked an advert went on to book). If you click &quot;Reject&quot;, Google Ads cookies are not set.</p>
               <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
                 <table className="w-full text-xs">
                   <thead>
@@ -42,9 +42,14 @@ export default function CookiesPage() {
                       <td className="px-4 py-2.5 text-slate-500">Session</td>
                     </tr>
                     <tr>
-                      <td className="px-4 py-2.5 font-mono text-slate-700">cookie_consent</td>
-                      <td className="px-4 py-2.5 text-slate-500">Remembers that you accepted this notice</td>
-                      <td className="px-4 py-2.5 text-slate-500">1 year</td>
+                      <td className="px-4 py-2.5 font-mono text-slate-700">cookie_consent_v2</td>
+                      <td className="px-4 py-2.5 text-slate-500">Remembers whether you accepted or rejected Google Ads cookies (stored in your browser)</td>
+                      <td className="px-4 py-2.5 text-slate-500">Until cleared</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-2.5 font-mono text-slate-700">_gcl_au, _gcl_aw</td>
+                      <td className="px-4 py-2.5 text-slate-500">Google Ads: measures whether visits from our adverts lead to bookings. Only set if you click &quot;Accept&quot;.</td>
+                      <td className="px-4 py-2.5 text-slate-500">Up to 90 days</td>
                     </tr>
                   </tbody>
                 </table>

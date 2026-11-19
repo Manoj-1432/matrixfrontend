@@ -78,7 +78,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-lg font-bold text-slate-900 mb-2">8. Cookies</h2>
-              <p>Our website uses only essential cookies required for the site to function (authentication tokens). We do not use tracking or advertising cookies. See our <Link href="/cookies" className="text-blue-600 hover:underline">Cookie Policy</Link> for details.</p>
+              <p>Our website uses essential cookies required for the site to function (authentication tokens). If you click &quot;Accept&quot; on our cookie banner, we also use Google Ads cookies to measure how well our adverts work. If you click &quot;Reject&quot;, these are not used. See our <Link href="/cookies" className="text-blue-600 hover:underline">Cookie Policy</Link> for details.</p>
             </section>
 
             <section>

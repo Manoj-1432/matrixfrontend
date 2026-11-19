@@ -6,6 +6,29 @@ import MobileBookingBar from '@/components/MobileBookingBar';
 import CookieBanner from '@/components/CookieBanner';
 import Link from 'next/link';
 import Image from 'next/image';
+import Script from 'next/script';
+
+// Google Ads tag. Consent Mode: advertising cookies stay off until the visitor
+// clicks "Accept" in the cookie banner (stored as cookie_consent_v2).
+const GOOGLE_ADS_ID = 'AW-18136825590';
+const GTAG_INIT = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+  analytics_storage: 'denied', wait_for_update: 500
+});
+try {
+  if (localStorage.getItem('cookie_consent_v2') === 'accepted') {
+    gtag('consent', 'update', {
+      ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted',
+      analytics_storage: 'granted'
+    });
+  }
+} catch (e) {}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');
+`;
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -190,6 +213,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="ICBM" content={`${SHOP_LAT}, ${SHOP_LNG}`} />
       </head>
       <body className="flex flex-col min-h-screen antialiased">
+        <Script id="gtag-init" strategy="afterInteractive">{GTAG_INIT}</Script>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="afterInteractive" />
         <Navbar />
         <main className="flex-1 pb-[72px] lg:pb-0">{children}</main>
         <MobileBookingBar />

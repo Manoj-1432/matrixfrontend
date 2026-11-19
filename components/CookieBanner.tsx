@@ -2,15 +2,33 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+const CONSENT_KEY = 'cookie_consent_v2';
+
+type GtagWindow = Window & { gtag?: (...args: unknown[]) => void };
+
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem('cookie_consent')) setVisible(true);
+    // Read the stored choice after mount (localStorage only exists in the browser).
+    const id = setTimeout(() => {
+      let stored: string | null = null;
+      try { stored = localStorage.getItem(CONSENT_KEY); } catch {}
+      if (!stored) setVisible(true);
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
-  function accept() {
-    localStorage.setItem('cookie_consent', 'accepted');
+  function choose(choice: 'accepted' | 'rejected') {
+    try { localStorage.setItem(CONSENT_KEY, choice); } catch {}
+    if (choice === 'accepted') {
+      (window as GtagWindow).gtag?.('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+        analytics_storage: 'granted',
+      });
+    }
     setVisible(false);
   }
 
@@ -23,12 +41,17 @@ export default function CookieBanner() {
         <div className="flex-1">
           <p className="text-white font-semibold text-sm mb-1">We use cookies</p>
           <p className="text-blue-200/60 text-xs leading-relaxed">
-            We only use essential cookies needed for the site to work (login sessions). No tracking or advertising cookies.{' '}
-            <Link href="/privacy" className="text-blue-400 hover:text-blue-300 underline">Privacy Policy</Link>
+            We use essential cookies to make the site work. With your permission we also use Google Ads cookies to
+            measure how well our adverts work.{' '}
+            <Link href="/cookies" className="text-blue-400 hover:text-blue-300 underline">Cookie Policy</Link>
           </p>
         </div>
         <div className="flex gap-2 shrink-0">
-          <button onClick={accept}
+          <button onClick={() => choose('rejected')}
+            className="border border-white/30 hover:bg-white/10 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-colors">
+            Reject
+          </button>
+          <button onClick={() => choose('accepted')}
             className="bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs px-5 py-2.5 rounded-xl transition-colors">
             Accept
           </button>
