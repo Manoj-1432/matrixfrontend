@@ -4,6 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import MobileBookingBar from '@/components/MobileBookingBar';
 import CookieBanner from '@/components/CookieBanner';
+import ConversionTracking from '@/components/ConversionTracking';
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
@@ -215,6 +216,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex flex-col min-h-screen antialiased">
         <Script id="gtag-init" strategy="afterInteractive">{GTAG_INIT}</Script>
         <Script src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="afterInteractive" />
+        <ConversionTracking />
         <Navbar />
         <main className="flex-1 pb-[72px] lg:pb-0">{children}</main>
         <MobileBookingBar />
