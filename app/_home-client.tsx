@@ -52,7 +52,24 @@ const TRUST = [
   { icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', title: '15-Mile Radius', desc: 'We cover Coventry and all towns within 15 miles — home, work or roadside.' },
 ];
 
-const AREAS = ['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Bedworth', 'Hinckley'];
+// Each links to its own area page (helps customers and search engines find them)
+const AREAS = [
+  { name: 'Coventry', slug: 'coventry' },
+  { name: 'Bedworth', slug: 'bedworth' },
+  { name: 'Nuneaton', slug: 'nuneaton' },
+  { name: 'Kenilworth', slug: 'kenilworth' },
+  { name: 'Meriden', slug: 'meriden' },
+  { name: 'Warwick', slug: 'warwick' },
+  { name: 'Leamington Spa', slug: 'leamington-spa' },
+  { name: 'Rugby', slug: 'rugby' },
+  { name: 'Hinckley', slug: 'hinckley' },
+  { name: 'Solihull', slug: 'solihull' },
+  { name: 'Coleshill', slug: 'coleshill' },
+  { name: 'Atherstone', slug: 'atherstone' },
+  { name: 'Lutterworth', slug: 'lutterworth' },
+  { name: 'Sutton Coldfield', slug: 'sutton-coldfield' },
+  { name: 'Tamworth', slug: 'tamworth' },
+];
 
 const FAQS = [
   { q: 'How does mobile tyre fitting work?', a: 'We come to your chosen location — home, work, or roadside — with everything needed to fit your tyres on the spot. No need to visit a garage or wait in a queue.' },
@@ -451,12 +468,12 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             {AREAS.map(a => (
-              <Link key={a} href="/areas"
+              <Link key={a.slug} href={`/areas/${a.slug}`}
                 className="group flex items-center gap-2 bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 text-slate-600 font-semibold px-6 py-3 rounded-2xl text-sm transition-all duration-200 shadow-sm hover:shadow-md">
                 <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                {a}
+                {a.name}
               </Link>
             ))}
           </div>
