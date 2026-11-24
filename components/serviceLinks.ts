@@ -9,4 +9,5 @@ export const SERVICE_LINKS = [
   { href: '/fleet-tyres', label: 'Fleet & Business Tyres' },
   { href: '/tpms', label: 'TPMS Sensors' },
   { href: '/batteries', label: 'Car Batteries' },
+  { href: '/jump-start', label: '24/7 Jump Start' },
 ];

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Mobile Car Battery Replacement Coventry | Matrix Mobile Tyres',
-  description: 'Mobile car battery testing, replacement and jump starts in Coventry and surrounding areas. Flat battery? We come to your home, work or roadside — 7 days a week.',
-  keywords: ['car battery replacement Coventry', 'mobile car battery Coventry', 'flat battery Coventry', 'car battery fitting Coventry', 'jump start Coventry'],
+  description: 'Mobile car battery testing, replacement and jump starts in Coventry and surrounding areas. Flat battery? We come to your home, work or roadside — 24/7.',
+  keywords: ['car battery replacement Coventry', 'mobile car battery Coventry', 'flat battery Coventry', 'car battery fitting Coventry', 'jump start Coventry', '24 hour car battery Coventry'],
   alternates: { canonical: '/batteries' },
   openGraph: {
     title: 'Mobile Car Battery Replacement Coventry | Matrix Mobile Tyres',
@@ -121,6 +122,10 @@ export default function BatteriesPage() {
               </div>
             ))}
           </div>
+          <p className="text-center text-sm text-slate-500 mt-8">
+            Car won&apos;t start right now?{' '}
+            <Link href="/jump-start" className="text-blue-700 font-semibold hover:underline">See our 24/7 jump start service</Link>.
+          </p>
         </div>
       </section>
 
