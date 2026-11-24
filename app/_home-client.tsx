@@ -8,26 +8,26 @@ const WA = 'https://wa.me/447721570075';
 
 const SERVICES = [
   {
-    title: 'Mobile Tyre Fitting',
+    title: 'Mobile Tyre Fitting', href: '/tyres',
     desc: 'We come to your home, workplace or roadside. No garage visit, no waiting room.',
     icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 5H4m0 0l4 4m-4-4l4-4',
     accent: '#2563eb', bg: 'rgba(37,99,235,0.08)',
   },
   {
-    title: 'Same Day Fitting',
+    title: 'Same Day Fitting', href: '/booking',
     desc: "Need it done today? Call us and we'll do everything we can to fit you in.",
     icon: 'M13 10V3L4 14h7v7l9-11h-7z',
     accent: '#16a34a', bg: 'rgba(22,163,74,0.08)',
   },
   {
-    title: 'TPMS Service',
+    title: 'TPMS Service', href: '/tpms',
     desc: 'Sensor reset and replacement carried out after every tyre change on modern vehicles.',
     icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
     accent: '#7c3aed', bg: 'rgba(124,58,237,0.08)',
   },
   {
-    title: 'Emergency Callout',
-    desc: 'Stranded with a puncture? We cover Coventry and all surrounding areas, 7 days a week.',
+    title: '24/7 Emergency Callout', href: '/emergency-tyre-fitting',
+    desc: 'Flat tyre or puncture? Emergency tyre fitting day or night across Coventry and surrounding areas.',
     icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z',
     accent: '#ea580c', bg: 'rgba(234,88,12,0.08)',
   },
@@ -47,7 +47,7 @@ const TRUST = [
   { icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', title: 'No Hidden Fees', desc: 'The price you see is the price you pay. No callout charges or surprise extras.' },
   { icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', title: '5.0 ★ Rated', desc: 'Consistently rated 5 stars by our customers across Coventry and beyond.' },
   { icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', title: 'Fast Response', desc: 'We aim to reach you within 60 minutes for emergency callouts.' },
-  { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', title: '7 Days a Week', desc: 'Available Monday to Sunday including bank holidays. We work around you.' },
+  { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', title: 'Open 24/7', desc: 'Day or night, 365 days a year including bank holidays. We work around you.' },
   { icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', title: '15-Mile Radius', desc: 'We cover Coventry and all towns within 15 miles — home, work or roadside.' },
 ];
 
@@ -56,6 +56,7 @@ const AREAS = ['Coventry', 'Warwick', 'Leamington Spa', 'Rugby', 'Nuneaton', 'Be
 const FAQS = [
   { q: 'How does mobile tyre fitting work?', a: 'We come to your chosen location — home, work, or roadside — with everything needed to fit your tyres on the spot. No need to visit a garage or wait in a queue.' },
   { q: 'How do I know which tyres fit my car?', a: 'Simply enter your vehicle registration and we instantly identify the correct tyre size for your car. You can also find the size printed on your existing tyres or in your vehicle handbook.' },
+  { q: 'Do you offer emergency tyre fitting?', a: "Yes — 24/7. If you have a flat tyre, puncture or blowout, call or WhatsApp us and we aim to reach you within 30–60 minutes anywhere in our Coventry coverage area, with no callout fee." },
   { q: 'Can you fit tyres the same day?', a: "In many cases yes. For same-day or emergency fitting, call or WhatsApp us directly and we'll do everything we can to get to you quickly." },
   { q: 'What areas do you cover?', a: 'We cover Coventry and all surrounding towns within a 15-mile radius, including Warwick, Leamington Spa, Rugby, Nuneaton, Bedworth and Hinckley.' },
   { q: 'Do you carry budget, mid-range and premium tyres?', a: 'Yes — we stock a wide range from leading brands like Michelin, Continental and Pirelli down to quality budget options, so you can choose what suits your budget.' },
@@ -102,12 +103,11 @@ function FaqSection() {
                   </svg>
                 </span>
               </button>
-              {open === i && (
-                <div className="px-6 pb-6">
-                  <div className="h-px bg-slate-100 mb-4" />
-                  <p className="text-slate-500 text-sm leading-[1.85]">{f.a}</p>
-                </div>
-              )}
+              {/* Always in the page HTML (so Google can read it); only shown when opened */}
+              <div className={`px-6 pb-6 ${open === i ? '' : 'hidden'}`}>
+                <div className="h-px bg-slate-100 mb-4" />
+                <p className="text-slate-500 text-sm leading-[1.85]">{f.a}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -154,27 +154,33 @@ export default function Home() {
           backgroundSize: '64px 64px',
         }} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20 lg:pt-28 lg:pb-32 grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-20 lg:pt-28 lg:pb-32 grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-400/25 text-green-400 text-xs font-semibold px-4 py-2 rounded-full mb-8 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
-              Available Now · 7 Days a Week
+              Available Now · 24/7 Emergency Callouts
             </div>
 
-            <h1 className="text-5xl lg:text-[3.8rem] xl:text-[4.2rem] font-black text-white leading-[1.05] tracking-tight mb-6">
-              Tyres Fitted{' '}
-              <br className="hidden sm:block" />
+            <h1 className="text-[2.6rem] sm:text-5xl lg:text-[3.6rem] xl:text-[4rem] font-black text-white leading-[1.05] tracking-tight mb-6">
+              24/7 Mobile &amp; Emergency{' '}
               <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, #34d399 0%, #60a5fa 60%, #818cf8 100%)' }}>
-                at Your Door
+                Tyre Fitting in Coventry
               </span>
             </h1>
 
-            <p className="text-blue-200/70 text-lg leading-[1.8] mb-10 max-w-[460px]">
-              Coventry&apos;s trusted mobile tyre fitting service. We come to you — home, work, or roadside — with no hidden fees and no garage wait.
+            <p className="text-blue-200/70 text-lg leading-[1.8] mb-10 max-w-[480px]">
+              Flat tyre, puncture or need new tyres? We come to you — home, work or roadside — day or night.
+              Emergency callouts aim to reach you in 30–60 minutes, with no callout fee and no garage wait.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">
+              <a href={`tel:${PHONE}`}
+                className="inline-flex items-center gap-2.5 font-bold px-8 py-4 rounded-xl text-sm transition-all duration-200 hover:-translate-y-0.5 text-white"
+                style={{ background: 'linear-gradient(135deg, #ea580c, #dc2626)', boxShadow: '0 6px 28px rgba(234,88,12,0.4)' }}>
+                <Icon d={SERVICES[3].icon} className="w-4 h-4" />
+                Emergency? Call {PHONE}
+              </a>
               <Link href="/tyres"
                 className="inline-flex items-center gap-2.5 font-bold px-8 py-4 rounded-xl text-sm transition-all duration-200 hover:-translate-y-0.5 text-white"
                 style={{ background: 'linear-gradient(135deg, #2563eb, #4f46e5)', boxShadow: '0 6px 28px rgba(79,70,229,0.45)' }}>
@@ -189,7 +195,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-wrap gap-x-6 gap-y-2.5">
-              {['Fully insured', 'No hidden fees', 'Rated 5.0 ★', '7 days a week'].map(t => (
+              {['Open 24/7', 'No callout fee', 'Rated 5.0 ★', 'Fully insured'].map(t => (
                 <span key={t} className="flex items-center gap-2 text-[13px] text-blue-100/60 font-medium">
                   <Check />
                   {t}
@@ -318,7 +324,7 @@ export default function Home() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {SERVICES.map(s => (
-              <Link key={s.title} href="/tyres"
+              <Link key={s.title} href={s.href}
                 className="group bg-white rounded-2xl p-7 border border-slate-100 hover:border-transparent hover:shadow-2xl hover:shadow-slate-200/80 hover:-translate-y-2 transition-all duration-300 flex flex-col relative overflow-hidden">
                 <div className="absolute inset-x-0 top-0 h-0.5 rounded-t-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" style={{ background: `linear-gradient(90deg, ${s.accent}, transparent)` }} />
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 shrink-0"

@@ -3,15 +3,18 @@ import HomeClient from './_home-client';
 import GoogleReviews from '@/components/GoogleReviews';
 
 export const metadata: Metadata = {
-  title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry — Home, Work or Roadside',
+  title: 'Mobile & Emergency Tyre Fitting Coventry 24/7 | Matrix Mobile Tyres',
   description:
-    'Mobile tyre fitting in Coventry, Warwick, Leamington Spa, Rugby, Nuneaton & Bedworth. We come to you at home, work or roadside. Same-day available, 7 days a week. Book online — no garage needed.',
+    '24/7 mobile and emergency tyre fitting in Coventry, Bedworth, Nuneaton, Warwick, Leamington Spa & Rugby. Flat tyre or puncture? We come to your home, work or roadside — no callout fee. Call 07721570075.',
   keywords: [
     'mobile tyre fitting Coventry',
     'mobile tyres Coventry',
     'mobile tyre fitter near me',
     'tyre fitting at home Coventry',
     'emergency mobile tyre fitting Coventry',
+    'emergency tyre fitting Coventry',
+    '24 hour mobile tyre fitting Coventry',
+    'flat tyre Coventry',
     'same day tyre fitting Coventry',
     'mobile tyre fitting Warwick',
     'mobile tyre fitting Leamington Spa',
@@ -22,9 +25,9 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Matrix Mobile Tyres | Mobile Tyre Fitting Coventry',
+    title: '24/7 Mobile & Emergency Tyre Fitting Coventry | Matrix Mobile Tyres',
     description:
-      'We come to you — home, work or roadside. Mobile tyre fitting across Coventry and 15 miles around it. No hidden fees. Book online.',
+      'Flat tyre or puncture? We come to you 24/7 — home, work or roadside — across Coventry and 15 miles around it. No callout fee.',
     url: '/',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Matrix Mobile Tyres Coventry' }],
   },
@@ -52,10 +55,10 @@ const faqSchema = {
     },
     {
       '@type': 'Question',
-      name: 'How quickly can you come out for an emergency tyre fitting?',
+      name: 'Do you offer emergency tyre fitting?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We aim to reach you within 30–60 minutes for emergency callouts across our Coventry coverage area.',
+        text: 'Yes — 24/7. If you have a flat tyre, puncture or blowout, call or WhatsApp us and we aim to reach you within 30–60 minutes anywhere in our Coventry coverage area, with no callout fee.',
       },
     },
     {

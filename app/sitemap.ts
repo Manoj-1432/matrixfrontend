@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: BASE,                          lastModified: new Date(), changeFrequency: 'weekly',  priority: 1    },
     { url: `${BASE}/tyres`,               lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9  },
+    { url: `${BASE}/emergency-tyre-fitting`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${BASE}/booking`,             lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9  },
     { url: `${BASE}/areas`,               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     ...AREA_SLUGS.map(slug => ({
