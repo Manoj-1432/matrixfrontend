@@ -5,7 +5,7 @@ import GoogleReviews from '@/components/GoogleReviews';
 export const metadata: Metadata = {
   title: 'Mobile & Emergency Tyre Fitting Coventry 24/7 | Matrix Mobile Tyres',
   description:
-    '24/7 mobile and emergency tyre fitting in Coventry, Bedworth, Nuneaton, Warwick, Leamington Spa & Rugby. Flat tyre or puncture? We come to your home, work or roadside — no callout fee. Call 07721570075.',
+    '24/7 mobile tyres and roadside assistance in Coventry, Bedworth, Nuneaton, Warwick, Leamington Spa & Rugby. Flat tyre, puncture or flat battery? We come to your home, work or roadside. Call 07721570075.',
   keywords: [
     'mobile tyre fitting Coventry',
     'mobile tyres Coventry',
@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     'emergency tyre fitting Coventry',
     '24 hour mobile tyre fitting Coventry',
     'flat tyre Coventry',
+    'roadside assistance Coventry',
+    'jump start Coventry',
     'same day tyre fitting Coventry',
     'mobile tyre fitting Warwick',
     'mobile tyre fitting Leamington Spa',

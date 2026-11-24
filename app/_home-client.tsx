@@ -171,8 +171,8 @@ export default function Home() {
             </h1>
 
             <p className="text-blue-200/70 text-lg leading-[1.8] mb-10 max-w-[480px]">
-              Flat tyre, puncture or need new tyres? We come to you — home, work or roadside — day or night.
-              Emergency callouts aim to reach you in 30–60 minutes, with no callout fee and no garage wait.
+              Flat tyre, puncture or flat battery? Coventry&apos;s 24/7 mobile tyres and roadside assistance team comes to you —
+              home, work or roadside — day or night. Emergency tyre callouts aim to reach you in 30–60 minutes, with no callout fee.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-10">

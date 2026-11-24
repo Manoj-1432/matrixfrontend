@@ -1,6 +1,7 @@
 // One list of service pages, used by the footer, the homepage and each service page.
 export const SERVICE_LINKS = [
   { href: '/emergency-tyre-fitting', label: '24/7 Emergency Tyre Fitting' },
+  { href: '/roadside-assistance', label: '24/7 Roadside Assistance' },
   { href: '/puncture-repair', label: 'Puncture Repair' },
   { href: '/run-flat-tyres', label: 'Run-Flat Tyres' },
   { href: '/van-4x4-tyres', label: 'Van & 4x4 Tyres' },
