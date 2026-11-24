@@ -23,6 +23,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     { url: `${BASE}/shop`,                lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9  },
     { url: `${BASE}/tpms`,                lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8  },
+    ...['puncture-repair', 'run-flat-tyres', 'van-4x4-tyres', 'locking-wheel-nut-removal', 'part-worn-tyres', 'fleet-tyres'].map(slug => ({
+      url: `${BASE}/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     { url: `${BASE}/batteries`,           lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8  },
     { url: `${BASE}/about`,               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6  },
     { url: `${BASE}/contact`,             lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6  },

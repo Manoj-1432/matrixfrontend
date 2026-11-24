@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import MobileBookingBar from '@/components/MobileBookingBar';
 import CookieBanner from '@/components/CookieBanner';
 import ConversionTracking from '@/components/ConversionTracking';
+import { SERVICE_LINKS } from '@/components/serviceLinks';
 import Link from 'next/link';
 import Image from 'next/image';
 import Script from 'next/script';
@@ -270,11 +271,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <h4 className="text-white font-bold text-xs uppercase tracking-[0.15em] mb-5">Services</h4>
                 <div className="flex flex-col gap-2.5 text-sm text-gray-500">
                   {[
-                    { href: '/tyres', label: 'Tyre Fitting' },
-                    { href: '/tyres', label: 'Wheel Balancing' },
-                    { href: '/tpms', label: 'TPMS Diagnostic' },
-                    { href: '/contact', label: 'Batteries & Bulbs' },
-                    { href: '/contact', label: 'Emergency Callout' },
+                    { href: '/tyres', label: 'Mobile Tyre Fitting' },
+                    ...SERVICE_LINKS,
                   ].map(l => (
                     <Link key={l.label} href={l.href} className="hover:text-white transition-colors hover:translate-x-0.5 inline-block transition-transform duration-150">{l.label}</Link>
                   ))}

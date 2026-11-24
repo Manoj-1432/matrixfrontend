@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { SERVICE_LINKS } from '@/components/serviceLinks';
 
 const PHONE = '07721570075';
 const WA = 'https://wa.me/447721570075';
@@ -339,6 +340,19 @@ export default function Home() {
                 </span>
               </Link>
             ))}
+          </div>
+
+          {/* More services — links to each service page */}
+          <div className="mt-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400 mb-4">More mobile tyre services in Coventry</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {SERVICE_LINKS.map(s => (
+                <Link key={s.href} href={s.href}
+                  className="bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-sm font-semibold px-4 py-2 rounded-full transition-colors">
+                  {s.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
