@@ -2,7 +2,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { api, type Order } from '@/lib/api';
+import { api, type Order, orderTyreLines, tyreLineName } from '@/lib/api';
 import BookingProgress from '@/components/BookingProgress';
 
 const PHONE = '07721570075';
@@ -77,13 +77,13 @@ function SuccessInner() {
                 </div>
                 {([
                   ['Order Reference', order.order_ref ?? `#ORD-${String(order.id).padStart(4,'0')}`],
-                  ['Tyre', `${order.tyre_brand} ${order.tyre_model} · ${order.tyre_size} × ${order.tyre_quantity}`],
+                  ...orderTyreLines(order).map(l => ['Tyre', `${tyreLineName(l)} · ${l.tyre_size ?? ''} × ${l.quantity}`] as [string, string]),
                   ...(order.vehicle_registration ? [['Vehicle', order.vehicle_registration] as [string, string]] : []),
                   ['Fitting Date', fmt(order.fitting_date)],
                   ['Total Paid', `£${Number(order.amount).toFixed(2)}`],
                   ['Payment', order.payment_status],
                 ] as [string, string][]).map(([label, value], i) => (
-                  <div key={label} className={`flex items-start justify-between gap-4 px-5 py-3 ${i % 2 === 1 ? 'bg-slate-50/50' : ''}`}>
+                  <div key={`${label}-${i}`} className={`flex items-start justify-between gap-4 px-5 py-3 ${i % 2 === 1 ? 'bg-slate-50/50' : ''}`}>
                     <span className="text-sm text-slate-500 shrink-0">{label}</span>
                     <span className="text-sm font-semibold text-slate-900 text-right">{value}</span>
                   </div>

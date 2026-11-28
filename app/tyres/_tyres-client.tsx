@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { api, type TyreResult, type VehicleLookupResult, type SearchOptions } from '@/lib/api';
 import ScrollToTop from '@/components/ScrollToTop';
 import { addToCart, getCart, updateQty, removeFromCart, clearCart, cartTotal, type CartItem } from '@/lib/cart';
+import { encodeBookingItems } from '@/lib/bookingItems';
 
 const PHONE = '07721570075';
 
@@ -208,8 +209,8 @@ function TyresInner() {
 
   function handleBookCart() {
     if (cart.length === 0) return;
-    const first = cart[0];
-    // Store full cart in localStorage for checkout to read
+    // Every tyre in the cart goes to the booking (id:qty pairs; prices are looked up again)
+    const itemsParam = encodeBookingItems(cart.map(c => ({ tyre_id: c.tyre.id, qty: c.qty })));
     // Vehicle details from the reg lookup (DVLA) go with the booking, so the customer never types them
     let vehicleQuery = '';
     if (vehicleReg) {
@@ -219,7 +220,7 @@ function TyresInner() {
       if (vehicle?.yearOfManufacture) v.set('vehicle_year', String(vehicle.yearOfManufacture));
       vehicleQuery = `&${v}`;
     }
-    router.push(`/booking?tyre_id=${first.tyre.id}&tyre_brand=${encodeURIComponent(getBrandName(first.tyre))}&tyre_model=${encodeURIComponent(first.tyre.model)}&tyre_size=${encodeURIComponent(getSizeLabel(first.tyre))}&tyre_price=${getPrice(first.tyre)}&qty=${first.qty}&cart=1${vehicleQuery}`);
+    router.push(`/booking?items=${itemsParam}&cart=1${vehicleQuery}`);
   }
 
   const SELECT = 'w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer';

@@ -2,11 +2,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/adminApi';
+import { orderTyreLines, tyreLineName, type OrderTyreLine } from '@/lib/api';
 
 type Order = {
   id: number; order_ref?: string; status: string; payment_status: string;
   amount: number; tyre_brand: string; tyre_model: string; tyre_size: string;
   tyre_quantity: number; vehicle_registration?: string; fitting_date?: string;
+  items?: OrderTyreLine[];
   created_at: string;
   user?: { name: string; email: string; phone?: string; address?: string; city?: string; postcode?: string };
   slot?: { start_time: string; end_time: string; day: string };
@@ -228,8 +230,12 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-6 py-4 font-mono text-slate-600 text-xs">{o.vehicle_registration ?? '—'}</td>
                     <td className="px-6 py-4 text-slate-600">
-                      {o.tyre_brand} {o.tyre_model}<br />
-                      <span className="text-xs text-slate-400">{o.tyre_size} × {o.tyre_quantity}</span>
+                      {orderTyreLines(o).map((l, i) => (
+                        <div key={i} className={i > 0 ? 'mt-1.5' : ''}>
+                          {tyreLineName(l)}<br />
+                          <span className="text-xs text-slate-400">{l.tyre_size} × {l.quantity}</span>
+                        </div>
+                      ))}
                     </td>
                     <td className="px-6 py-4 text-slate-500 text-xs">
                       <p>{fmtDate(o.fitting_date)}</p>

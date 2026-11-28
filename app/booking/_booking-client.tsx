@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { api, type Slot, type CheckoutConfig, type TyreResult } from '@/lib/api';
+import { api, type Slot, type CheckoutConfig } from '@/lib/api';
+import { parseBookingItems, encodeBookingItems, useBookingTyres, tyreBrand, tyreSizeLabel, type BookingLine } from '@/lib/bookingItems';
 import BookingProgress from '@/components/BookingProgress';
 
 const DAY_ABBR   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -18,21 +19,20 @@ function fmt12(t: string) {
 function BookingInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const tyreId    = params.get('tyre_id');
-  const tyreBrand = params.get('tyre_brand') ?? '';
-  const tyreModel = params.get('tyre_model') ?? '';
-  const tyreSize  = params.get('tyre_size') ?? '';
-  const tyrePrice = params.get('tyre_price') ?? '';
+  // Every tyre chosen in the cart (id + quantity); details are loaded from the API
+  const [lines, setLines] = useState<BookingLine[]>(() => parseBookingItems(params));
+  const { tyres } = useBookingTyres(lines);
 
-  const [tyre, setTyre] = useState<TyreResult | null>(null);
   const [allSlots, setAllSlots]     = useState<Slot[]>([]);
   const [today, setToday]           = useState('');
   const [occupiedKeys, setOccupied] = useState<Set<string>>(new Set());
   const [selectedDate, setSelDate]  = useState<string | null>(null);
   const [selectedSlot, setSelSlot]  = useState<Slot | null>(null);
   const [loadingSlots, setLoadSlots]= useState(false);
-  // Start from the quantity chosen in the tyre cart (was always reset to 1)
-  const [qty, setQty]               = useState(() => Math.max(1, Math.floor(Number(params.get('qty')) || 1)));
+
+  function setLineQty(tyreId: number, qty: number) {
+    setLines(ls => ls.map(l => l.tyre_id === tyreId ? { ...l, qty } : l));
+  }
 
   useEffect(() => {
     const now = new Date();
@@ -42,13 +42,7 @@ function BookingInner() {
       api.get<{ slots: Slot[] }>('/api/public/slots'),
       api.get<CheckoutConfig>('/api/public/checkout-config'),
     ]).then(([sData]) => setAllSlots(sData.slots ?? []));
-
-    if (tyreId) {
-      api.get<{ tyre: TyreResult }>(`/api/public/tyres/${tyreId}`)
-        .then(d => setTyre(d.tyre))
-        .catch(() => null);
-    }
-  }, [tyreId]);
+  }, []);
 
   const dates = Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date(today + 'T00:00:00');
@@ -71,13 +65,8 @@ function BookingInner() {
     const p = new URLSearchParams({
       slot_id: String(selectedSlot.id),
       fitting_date: selectedDate,
-      qty: String(qty),
     });
-    if (tyreId) p.set('tyre_id', tyreId);
-    if (tyreBrand) p.set('tyre_brand', tyreBrand);
-    if (tyreModel) p.set('tyre_model', tyreModel);
-    if (tyreSize)  p.set('tyre_size', tyreSize);
-    if (tyrePrice) p.set('tyre_price', tyrePrice);
+    if (lines.length > 0) p.set('items', encodeBookingItems(lines));
     // Pass on vehicle details found from the reg plate search (DVLA)
     for (const k of ['vehicle_registration', 'vehicle_make', 'vehicle_model', 'vehicle_year']) {
       const v = params.get(k);
@@ -98,10 +87,6 @@ function BookingInner() {
     return slotDate.getTime() - Date.now() < 24 * 60 * 60 * 1000;
   }
 
-  const displayBrand = tyre ? (tyre.brand_name ?? tyre.brand ?? tyreBrand) : tyreBrand;
-  const displayModel = tyre?.model ?? tyreModel;
-  const displaySize  = tyre ? (tyre.size_label ?? tyre.size ?? tyreSize) : tyreSize;
-  const displayPrice = tyre ? Number(tyre.price) : Number(tyrePrice);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -114,23 +99,35 @@ function BookingInner() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Tyre summary */}
-        {(displayBrand || displayModel) && (
-          <div className="bg-white border border-slate-100 rounded-2xl p-5 mb-6 flex items-center justify-between gap-4 shadow-sm">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1">Selected Tyre</p>
-              <p className="font-bold text-slate-900">{displayBrand} {displayModel}</p>
-              {displaySize && <p className="text-sm text-slate-500 font-mono">{displaySize}</p>}
-            </div>
-            <div className="text-right shrink-0">
-              {displayPrice > 0 && <p className="text-xl font-black text-slate-900">£{displayPrice.toFixed(2)}</p>}
-              <div className="flex items-center gap-2 mt-1 justify-end">
-                <label className="text-xs text-slate-500 font-medium">Qty:</label>
-                <select value={qty} onChange={e => setQty(Number(e.target.value))}
-                  className="border border-slate-200 rounded-lg px-2 py-1 text-sm font-bold text-slate-700 outline-none focus:border-blue-400">
-                  {Array.from({ length: Math.max(4, qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
-                </select>
-              </div>
+        {/* Tyre summary — one row per tyre type in the cart */}
+        {lines.length > 0 && (
+          <div className="bg-white border border-slate-100 rounded-2xl p-5 mb-6 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">
+              {lines.length === 1 ? 'Selected Tyre' : 'Selected Tyres'}
+            </p>
+            <div className="flex flex-col divide-y divide-slate-100">
+              {lines.map(line => {
+                const t = tyres[line.tyre_id];
+                return (
+                  <div key={line.tyre_id} className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0">
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-900">{t ? `${tyreBrand(t)} ${t.model}` : 'Loading…'}</p>
+                      {t && <p className="text-sm text-slate-500 font-mono">{tyreSizeLabel(t)}</p>}
+                    </div>
+                    <div className="text-right shrink-0">
+                      {t && Number(t.price) > 0 && <p className="text-lg font-black text-slate-900">£{Number(t.price).toFixed(2)}</p>}
+                      <div className="flex items-center gap-2 mt-1 justify-end">
+                        <label className="text-xs text-slate-500 font-medium">Qty:</label>
+                        <select value={line.qty} onChange={e => setLineQty(line.tyre_id, Number(e.target.value))}
+                          aria-label={`Quantity${t ? ` for ${tyreBrand(t)} ${t.model}` : ''}`}
+                          className="border border-slate-200 rounded-lg px-2 py-1 text-sm font-bold text-slate-700 outline-none focus:border-blue-400">
+                          {Array.from({ length: Math.max(4, line.qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

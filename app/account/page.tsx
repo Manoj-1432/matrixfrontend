@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { customerApi, type CustomerUser, type Order } from '@/lib/api';
+import { customerApi, type CustomerUser, type Order, orderTyreLines, tyreLineName } from '@/lib/api';
 
 type Tab = 'orders' | 'profile' | 'password';
 
@@ -186,8 +186,12 @@ export default function AccountPage() {
                           {o.order_ref ?? `#ORD-${String(o.id).padStart(4,'0')}`}
                         </td>
                         <td className="px-6 py-4 text-slate-600">
-                          <p className="font-medium">{o.tyre_brand} {o.tyre_model}</p>
-                          <p className="text-xs text-slate-400 font-mono">{o.tyre_size} × {o.tyre_quantity}</p>
+                          {orderTyreLines(o).map((l, i) => (
+                            <div key={i} className={i > 0 ? 'mt-1.5' : ''}>
+                              <p className="font-medium">{tyreLineName(l)}</p>
+                              <p className="text-xs text-slate-400 font-mono">{l.tyre_size} × {l.quantity}</p>
+                            </div>
+                          ))}
                         </td>
                         <td className="px-6 py-4 text-slate-500 text-xs">{o.fitting_date ?? '—'}</td>
                         <td className="px-6 py-4">

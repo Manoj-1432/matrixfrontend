@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { customerApi, type Order } from '@/lib/api';
+import { customerApi, type Order, orderTyreLines, tyreLineName } from '@/lib/api';
 
 const STATUS_STYLE: Record<string, string> = {
   pending:    'bg-amber-50 text-amber-700 border-amber-200',
@@ -128,28 +128,18 @@ export default function OrderDetailPage() {
                 <p className="text-slate-800 font-semibold">{[order.vehicle_make, order.vehicle_model].filter(Boolean).join(' ')}</p>
               </div>
             )}
-            {order.tyre_brand && (
-              <div>
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Tyre Brand</p>
-                <p className="text-slate-800 font-semibold">{order.tyre_brand}</p>
-              </div>
-            )}
-            {order.tyre_model && (
-              <div>
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Tyre Model</p>
-                <p className="text-slate-800 font-semibold">{order.tyre_model}</p>
-              </div>
-            )}
-            {order.tyre_size && (
-              <div>
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Tyre Size</p>
-                <p className="text-slate-800 font-semibold">{order.tyre_size}</p>
-              </div>
-            )}
-            {order.tyre_quantity && (
-              <div>
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Quantity</p>
-                <p className="text-slate-800 font-semibold">{order.tyre_quantity} tyre{order.tyre_quantity > 1 ? 's' : ''}</p>
+            {orderTyreLines(order).length > 0 && (
+              <div className="col-span-full">
+                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Tyres</p>
+                <div className="flex flex-col gap-1.5">
+                  {orderTyreLines(order).map((l, i) => (
+                    <p key={i} className="text-slate-800 font-semibold">
+                      {tyreLineName(l)}
+                      {l.tyre_size && <span className="text-slate-500 font-mono font-normal"> · {l.tyre_size}</span>}
+                      <span className="text-slate-500 font-normal"> · {l.quantity} tyre{l.quantity > 1 ? 's' : ''}</span>
+                    </p>
+                  ))}
+                </div>
               </div>
             )}
           </div>

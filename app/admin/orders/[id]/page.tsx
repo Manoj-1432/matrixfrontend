@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { adminApi } from '@/lib/adminApi';
+import { orderTyreLines, tyreLineName, type OrderTyreLine } from '@/lib/api';
 
 type Slot = { id: number; day: string; start_time: string; end_time: string };
 type User = { id: number; name: string; email: string; phone?: string };
@@ -10,6 +11,7 @@ type Order = {
   id: number; order_ref?: string; status: string; payment_status: string;
   amount: number; payment_provider?: string; paid_at?: string;
   tyre_brand?: string; tyre_model?: string; tyre_size?: string; tyre_quantity?: number;
+  items?: OrderTyreLine[];
   vehicle_registration?: string; vehicle_make?: string; vehicle_model?: string;
   service_type?: string; fitting_date?: string; notes?: string;
   coupon_code?: string; created_at: string;
@@ -182,28 +184,25 @@ export default function AdminOrderDetailPage() {
                   <p className="text-slate-800 font-semibold">{[order.vehicle_make, order.vehicle_model].filter(Boolean).join(' ')}</p>
                 </div>
               )}
-              {order.tyre_brand && (
-                <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Brand</p>
-                  <p className="text-slate-800 font-semibold">{order.tyre_brand}</p>
-                </div>
-              )}
-              {order.tyre_model && (
-                <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Tyre Model</p>
-                  <p className="text-slate-800 font-semibold">{order.tyre_model}</p>
-                </div>
-              )}
-              {order.tyre_size && (
-                <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Size</p>
-                  <p className="text-slate-800 font-semibold">{order.tyre_size}</p>
-                </div>
-              )}
-              {order.tyre_quantity && (
-                <div>
-                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Qty</p>
-                  <p className="text-slate-800 font-semibold">{order.tyre_quantity} tyre{order.tyre_quantity > 1 ? 's' : ''}</p>
+              {orderTyreLines(order).length > 0 && (
+                <div className="col-span-full">
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                    Tyres{orderTyreLines(order).length > 1 ? ` (${orderTyreLines(order).length} types)` : ''}
+                  </p>
+                  <div className="flex flex-col divide-y divide-slate-100 border border-slate-100 rounded-xl">
+                    {orderTyreLines(order).map((l, i) => (
+                      <div key={i} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
+                        <span className="text-slate-800 font-semibold">
+                          {tyreLineName(l)}
+                          {l.tyre_size && <span className="text-slate-500 font-mono font-normal"> · {l.tyre_size}</span>}
+                        </span>
+                        <span className="text-slate-600 text-sm">
+                          {l.quantity} tyre{l.quantity > 1 ? 's' : ''}
+                          {l.line_total != null && <> · <strong className="text-slate-800">£{Number(l.line_total).toFixed(2)}</strong></>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -117,6 +117,8 @@ export type Order = {
   tyre_model: string;
   tyre_size: string;
   tyre_quantity: number;
+  /** Every tyre in the order (one entry per tyre type) */
+  items?: OrderTyreLine[];
   vehicle_registration?: string;
   vehicle_make?: string;
   vehicle_model?: string;
@@ -124,6 +126,44 @@ export type Order = {
   created_at?: string;
   slot?: { id: number; day: string; start_time: string; end_time: string } | null;
 };
+
+export type OrderTyreLine = {
+  tyre_id?: number | null;
+  tyre_brand?: string | null;
+  tyre_model?: string | null;
+  tyre_size?: string | null;
+  quantity: number;
+  unit_price?: number | string | null;
+  line_total?: number | string | null;
+  label?: string;
+};
+
+type OrderTyreFields = {
+  items?: OrderTyreLine[] | null;
+  tyre_brand?: string | null;
+  tyre_model?: string | null;
+  tyre_size?: string | null;
+  tyre_quantity?: number | null;
+};
+
+/**
+ * The tyres in an order. Uses `items` when the API sends them; older orders
+ * (and older API responses) only have the single tyre fields on the order.
+ */
+export function orderTyreLines(order: OrderTyreFields): OrderTyreLine[] {
+  if (order.items && order.items.length > 0) return order.items;
+  if (!order.tyre_brand && !order.tyre_model && !order.tyre_size) return [];
+  return [{
+    tyre_brand: order.tyre_brand,
+    tyre_model: order.tyre_model,
+    tyre_size: order.tyre_size,
+    quantity: Number(order.tyre_quantity) || 1,
+  }];
+}
+
+export function tyreLineName(line: OrderTyreLine): string {
+  return [line.tyre_brand, line.tyre_model].filter(Boolean).join(' ');
+}
 
 export type CustomerUser = {
   id: number;

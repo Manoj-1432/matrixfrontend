@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api, customerApi, type CheckoutConfig } from '@/lib/api';
+import { parseBookingItems, useBookingTyres, tyreBrand, tyreSizeLabel, type BookingLine } from '@/lib/bookingItems';
 import BookingProgress from '@/components/BookingProgress';
 
 const INPUT = 'w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all placeholder:text-slate-300';
@@ -13,8 +14,19 @@ function CheckoutInner() {
 
   const slotId      = params.get('slot_id') ?? '';
   const fittingDate = params.get('fitting_date') ?? '';
-  const tyreId      = params.get('tyre_id') ?? '';
-  const qtyParam    = params.get('qty') ?? '1';
+
+  // Every tyre in the booking (id + quantity). Names and prices come from our API;
+  // the server works out the final price itself.
+  const [lines, setLines] = useState<BookingLine[]>(() => parseBookingItems(params));
+  const { tyres, loading: tyresLoading } = useBookingTyres(lines);
+  const missingTyre = !tyresLoading && lines.some(l => !tyres[l.tyre_id]);
+
+  function setLineQty(tyreId: number, qty: number) {
+    setLines(ls => ls.map(l => l.tyre_id === tyreId ? { ...l, qty } : l));
+  }
+  function removeLine(tyreId: number) {
+    setLines(ls => ls.filter(l => l.tyre_id !== tyreId));
+  }
 
   const [config, setConfig]       = useState<CheckoutConfig | null>(null);
   const [coupon, setCoupon]       = useState('');
@@ -33,11 +45,6 @@ function CheckoutInner() {
     vehicle_make: params.get('vehicle_make') ?? '',
     vehicle_model: params.get('vehicle_model') ?? '',
     vehicle_year: params.get('vehicle_year') ?? '',
-    tyre_brand: params.get('tyre_brand') ?? '',
-    tyre_model: params.get('tyre_model') ?? '',
-    tyre_size: params.get('tyre_size') ?? '',
-    tyre_quantity: qtyParam,
-    tyre_unit_price: params.get('tyre_price') ?? '',
     customer_comment: '',
   });
 
@@ -122,9 +129,8 @@ function CheckoutInner() {
         ...form,
         slot_id: slotId,
         fitting_date: fittingDate,
-        tyre_id: tyreId || undefined,
-        tyre_quantity: Number(form.tyre_quantity),
-        tyre_unit_price: Number(form.tyre_unit_price),
+        items: lines.map(l => ({ tyre_id: l.tyre_id, quantity: l.qty })),
+        include_tpms: tpmsSelected,
         coupon_code: coupon || undefined,
       });
       const orderId = order.order.id;
@@ -140,9 +146,8 @@ function CheckoutInner() {
     } finally { setSubmitting(false); }
   }
 
-  const unitPrice   = Number(form.tyre_unit_price) || 0;
-  const qty         = Number(form.tyre_quantity) || 1;
-  const subtotal    = unitPrice * qty;
+  const qty         = lines.reduce((n, l) => n + l.qty, 0);
+  const subtotal    = lines.reduce((sum, l) => sum + (Number(tyres[l.tyre_id]?.price) || 0) * l.qty, 0);
   const vatAmount   = config?.vat_enabled ? subtotal * ((config.vat_percentage ?? 0) / 100) : 0;
   const tpmsRate    = config?.tpms_charge_enabled ? (config.tpms_charge ?? 0) : 0;
   const tpmsCharge  = tpmsSelected ? tpmsRate : 0;
@@ -170,10 +175,17 @@ function CheckoutInner() {
           </div>
         )}
 
-        {!tyreId && (
+        {lines.length === 0 && (
           <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-5 py-4 text-sm">
             Please choose your tyres first, so we can confirm the price.{' '}
             <a href="/tyres" className="font-bold underline">Find tyres for your car</a>, or call us on 07721570075.
+          </div>
+        )}
+
+        {missingTyre && (
+          <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-5 py-4 text-sm">
+            One of your tyres is no longer available. Remove it below, or{' '}
+            <a href="/tyres" className="font-bold underline">choose your tyres again</a>.
           </div>
         )}
 
@@ -273,36 +285,42 @@ function CheckoutInner() {
                 <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">3</span>
                 Tyre Details
               </h2>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                  <label className={LABEL}>Brand *</label>
-                  <input type="text" required value={form.tyre_brand} onChange={e => set('tyre_brand', e.target.value)} className={INPUT + err('tyre_brand')} />
-                  {fieldErrors.tyre_brand && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_brand[0]}</p>}
+              {lines.length === 0 ? (
+                <p className="text-sm text-slate-500">No tyres selected yet.</p>
+              ) : (
+                <div className="flex flex-col divide-y divide-slate-100">
+                  {lines.map(line => {
+                    const t = tyres[line.tyre_id];
+                    const price = Number(t?.price) || 0;
+                    return (
+                      <div key={line.tyre_id} className="flex flex-wrap items-center gap-3 py-3 first:pt-0 last:pb-0">
+                        <div className="flex-1 min-w-[180px]">
+                          <p className="font-bold text-slate-900 text-sm">
+                            {t ? `${tyreBrand(t)} ${t.model}` : tyresLoading ? 'Loading…' : 'No longer available'}
+                          </p>
+                          {t && <p className="text-xs text-slate-500 font-mono mt-0.5">{tyreSizeLabel(t)} · £{price.toFixed(2)} each</p>}
+                        </div>
+                        <label className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+                          Qty
+                          <select value={line.qty} onChange={e => setLineQty(line.tyre_id, Number(e.target.value))}
+                            aria-label={`Quantity${t ? ` for ${tyreBrand(t)} ${t.model}` : ''}`}
+                            className="border border-slate-200 rounded-lg px-2 py-1.5 text-sm font-bold text-slate-800 bg-white outline-none focus:border-blue-400 cursor-pointer">
+                            {Array.from({ length: Math.max(4, line.qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
+                          </select>
+                        </label>
+                        <span className="w-20 text-right font-bold text-slate-800 text-sm">£{(price * line.qty).toFixed(2)}</span>
+                        {lines.length > 1 && (
+                          <button type="button" onClick={() => removeLine(line.tyre_id)}
+                            className="text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors"
+                            aria-label={`Remove ${t ? `${tyreBrand(t)} ${t.model}` : 'tyre'}`}>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-                <div>
-                  <label className={LABEL}>Model *</label>
-                  <input type="text" required value={form.tyre_model} onChange={e => set('tyre_model', e.target.value)} className={INPUT + err('tyre_model')} />
-                  {fieldErrors.tyre_model && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_model[0]}</p>}
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className={LABEL}>Size *</label>
-                  <input type="text" required value={form.tyre_size} placeholder="205/55R16" onChange={e => set('tyre_size', e.target.value)} className={INPUT + err('tyre_size')} />
-                  {fieldErrors.tyre_size && <p className="text-xs text-red-500 mt-1">{fieldErrors.tyre_size[0]}</p>}
-                </div>
-                <div>
-                  <label className={LABEL}>Quantity *</label>
-                  <select value={form.tyre_quantity} onChange={e => set('tyre_quantity', e.target.value)}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer">
-                    {Array.from({ length: Math.max(4, qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className={LABEL}>Price / tyre (£)</label>
-                  <div className={INPUT + ' bg-slate-50 text-slate-700 cursor-default'}>£{Number(form.tyre_unit_price).toFixed(2)}</div>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Comments */}
@@ -319,12 +337,17 @@ function CheckoutInner() {
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sticky top-24">
               <h2 className="font-bold text-slate-900 mb-5">Order Summary</h2>
 
-              {form.tyre_brand && (
-                <div className="bg-slate-50 rounded-xl p-3.5 mb-4 text-sm">
-                  <p className="font-bold text-slate-800">{form.tyre_brand} {form.tyre_model}</p>
-                  <p className="text-slate-500 font-mono text-xs mt-0.5">{form.tyre_size}</p>
-                </div>
-              )}
+              {lines.map(line => {
+                const t = tyres[line.tyre_id];
+                if (!t) return null;
+                return (
+                  <div key={line.tyre_id} className="bg-slate-50 rounded-xl p-3.5 mb-2 text-sm">
+                    <p className="font-bold text-slate-800">{tyreBrand(t)} {t.model} <span className="text-slate-500 font-semibold">× {line.qty}</span></p>
+                    <p className="text-slate-500 font-mono text-xs mt-0.5">{tyreSizeLabel(t)}</p>
+                  </div>
+                );
+              })}
+              {lines.length > 0 && <div className="mb-2" />}
 
               {/* Vehicle found from the reg plate search — shown for confirmation, not editable */}
               {form.vehicle_registration && (
@@ -338,7 +361,7 @@ function CheckoutInner() {
               )}
 
               <div className="flex flex-col gap-2 text-sm mb-4">
-                {unitPrice > 0 && (
+                {subtotal > 0 && (
                   <div className="flex justify-between">
                     <span className="text-slate-500">Tyres × {qty}</span>
                     <span className="font-semibold text-slate-800">£{subtotal.toFixed(2)}</span>
@@ -398,7 +421,7 @@ function CheckoutInner() {
                 )}
               </div>
 
-              <button type="submit" disabled={submitting || outOfRange || !tyreId}
+              <button type="submit" disabled={submitting || outOfRange || lines.length === 0 || tyresLoading || missingTyre}
                 className="w-full text-white font-bold py-4 rounded-xl text-sm transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 style={{ background: outOfRange ? '#94a3b8' : 'linear-gradient(135deg,#1e3a8a,#4f46e5)', boxShadow: outOfRange ? 'none' : '0 4px 16px rgba(79,70,229,0.3)' }}>
                 {submitting ? 'Processing…' : outOfRange ? 'Area Not Covered' : 'Pay with Stripe →'}
