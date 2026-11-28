@@ -170,8 +170,17 @@ function CheckoutInner() {
           </div>
         )}
 
+        {!tyreId && (
+          <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-5 py-4 text-sm">
+            Please choose your tyres first, so we can confirm the price.{' '}
+            <a href="/tyres" className="font-bold underline">Find tyres for your car</a>, or call us on 07721570075.
+          </div>
+        )}
+
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-4 text-sm">{error}</div>
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-4 text-sm">
+            {fieldErrors.tyre_id ? 'Sorry, this tyre is no longer available. Please choose your tyres again.' : error}
+          </div>
         )}
 
         <form onSubmit={submit} className="grid lg:grid-cols-3 gap-6">
@@ -389,7 +398,7 @@ function CheckoutInner() {
                 )}
               </div>
 
-              <button type="submit" disabled={submitting || outOfRange}
+              <button type="submit" disabled={submitting || outOfRange || !tyreId}
                 className="w-full text-white font-bold py-4 rounded-xl text-sm transition-all hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 style={{ background: outOfRange ? '#94a3b8' : 'linear-gradient(135deg,#1e3a8a,#4f46e5)', boxShadow: outOfRange ? 'none' : '0 4px 16px rgba(79,70,229,0.3)' }}>
                 {submitting ? 'Processing…' : outOfRange ? 'Area Not Covered' : 'Pay with Stripe →'}
