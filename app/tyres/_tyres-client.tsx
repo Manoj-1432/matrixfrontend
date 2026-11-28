@@ -30,13 +30,26 @@ function getPrice(t: TyreResult) {
   return Number(t.price).toFixed(2);
 }
 
-function TyreCard({ t, onAdd, inCart }: { t: TyreResult; onAdd: (t: TyreResult) => void; inCart: boolean }) {
+const QTY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8];
+
+function TyreCard({ t, onAdd, onQtyChange, cartQty }: {
+  t: TyreResult;
+  onAdd: (t: TyreResult, qty: number) => void;
+  onQtyChange: (tyreId: number, qty: number) => void;
+  cartQty: number; // 0 = not in cart
+}) {
   const imgSrc = resolveImageUrl(t.image_url);
+  const inCart = cartQty > 0;
+  // Quantity chosen before adding; once in the cart the select edits the cart directly
+  const [pickQty, setPickQty] = useState(1);
+  const qty = inCart ? cartQty : pickQty;
+  // Hide the picture if it can't be loaded (e.g. an old upload that no longer exists)
+  const [imgFailed, setImgFailed] = useState(false);
   return (
     <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-200">
-      {imgSrc && (
+      {imgSrc && !imgFailed && (
         <div className="w-full h-40 bg-slate-50 overflow-hidden">
-          <img src={imgSrc} alt={t.model} className="w-full h-full object-cover" />
+          <img src={imgSrc} alt={t.model} className="w-full h-full object-cover" onError={() => setImgFailed(true)} />
         </div>
       )}
       <div className="p-5 flex flex-col gap-4 flex-1">
@@ -69,17 +82,33 @@ function TyreCard({ t, onAdd, inCart }: { t: TyreResult; onAdd: (t: TyreResult) 
           )}
         </div>
       )}
-      <div className="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+      <div className="pt-3 border-t border-slate-100 mt-auto flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={`qty-${t.id}`} className="text-xs font-bold uppercase tracking-widest text-slate-500">Quantity</label>
+        <select id={`qty-${t.id}`} value={qty}
+          onChange={e => {
+            const n = Number(e.target.value);
+            if (inCart) onQtyChange(t.id, n); else setPickQty(n);
+          }}
+          className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 bg-white outline-none focus:border-blue-400 cursor-pointer">
+          {(QTY_OPTIONS.includes(qty) ? QTY_OPTIONS : [...QTY_OPTIONS, qty]).map(n => (
+            <option key={n} value={n}>{n} {n === 1 ? 'tyre' : 'tyres'}</option>
+          ))}
+        </select>
+      </div>
+      <div className="flex items-center justify-between">
         <div>
           <span className="text-2xl font-black text-slate-900">£{getPrice(t)}</span>
           <span className="text-xs text-slate-400 ml-1">per tyre</span>
+          {qty > 1 && <p className="text-xs text-slate-500 mt-0.5">£{(Number(t.price) * qty).toFixed(2)} for {qty}</p>}
         </div>
         <button
-          onClick={() => onAdd(t)}
+          onClick={() => { if (!inCart) onAdd(t, pickQty); }}
           className={`text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${inCart ? 'bg-green-600 text-white' : 'text-white'}`}
           style={inCart ? {} : { background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
           {inCart ? '✓ Added' : 'Add to Cart'}
         </button>
+      </div>
       </div>
       </div>
     </div>
@@ -193,8 +222,8 @@ function TyresInner() {
 
   useEffect(() => { setCart(getCart()); }, []);
 
-  function handleAdd(t: TyreResult) {
-    const updated = addToCart(t, 1);
+  function handleAdd(t: TyreResult, qty = 1) {
+    const updated = addToCart(t, qty);
     setCart([...updated]);
     setShowCart(true);
   }
@@ -420,7 +449,10 @@ function TyresInner() {
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {tyres.map(t => <TyreCard key={t.id} t={t} onAdd={handleAdd} inCart={cart.some(c => c.tyre.id === t.id)} />)}
+                {tyres.map(t => (
+                  <TyreCard key={t.id} t={t} onAdd={handleAdd} onQtyChange={handleCartQty}
+                    cartQty={cart.find(c => c.tyre.id === t.id)?.qty ?? 0} />
+                ))}
               </div>
             )}
           </>
