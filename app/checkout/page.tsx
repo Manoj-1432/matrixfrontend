@@ -28,8 +28,11 @@ function CheckoutInner() {
   const [form, setForm] = useState({
     first_name: '', last_name: '', email: '', phone: '',
     address: '', city: '', postcode: '',
-    vehicle_registration: '',
-    vehicle_make: '', vehicle_model: '', vehicle_year: '',
+    // Filled automatically from the reg plate search (DVLA) — the customer doesn't type these
+    vehicle_registration: params.get('vehicle_registration') ?? '',
+    vehicle_make: params.get('vehicle_make') ?? '',
+    vehicle_model: params.get('vehicle_model') ?? '',
+    vehicle_year: params.get('vehicle_year') ?? '',
     tyre_brand: params.get('tyre_brand') ?? '',
     tyre_model: params.get('tyre_model') ?? '',
     tyre_size: params.get('tyre_size') ?? '',
@@ -58,7 +61,8 @@ function CheckoutInner() {
           address: user.address ?? '',
           city: user.city ?? '',
           postcode: user.postcode ?? '',
-          vehicle_registration: user.vehicle_registration_number ?? '',
+          // Prefer the reg they just searched with; fall back to the one saved on their account
+          vehicle_registration: f.vehicle_registration || (user.vehicle_registration_number ?? ''),
         }));
       } catch { /* ignore */ }
     }
@@ -254,36 +258,10 @@ function CheckoutInner() {
               </div>
             </div>
 
-            {/* Vehicle */}
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <h2 className="font-bold text-slate-900 mb-5 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">3</span>
-                Vehicle Details
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <label className={LABEL}>Reg Number</label>
-                  <input type="text" value={form.vehicle_registration} placeholder="AB12 CDE" onChange={e => set('vehicle_registration', e.target.value)} className={INPUT} />
-                </div>
-                <div>
-                  <label className={LABEL}>Make</label>
-                  <input type="text" value={form.vehicle_make} placeholder="Ford" onChange={e => set('vehicle_make', e.target.value)} className={INPUT} />
-                </div>
-                <div>
-                  <label className={LABEL}>Model</label>
-                  <input type="text" value={form.vehicle_model} placeholder="Focus" onChange={e => set('vehicle_model', e.target.value)} className={INPUT} />
-                </div>
-                <div>
-                  <label className={LABEL}>Year</label>
-                  <input type="number" value={form.vehicle_year} placeholder="2020" min={1990} max={new Date().getFullYear() + 1} onChange={e => set('vehicle_year', e.target.value)} className={INPUT} />
-                </div>
-              </div>
-            </div>
-
             {/* Tyre */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               <h2 className="font-bold text-slate-900 mb-5 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">4</span>
+                <span className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center">3</span>
                 Tyre Details
               </h2>
               <div className="grid grid-cols-2 gap-3 mb-3">
@@ -336,6 +314,17 @@ function CheckoutInner() {
                 <div className="bg-slate-50 rounded-xl p-3.5 mb-4 text-sm">
                   <p className="font-bold text-slate-800">{form.tyre_brand} {form.tyre_model}</p>
                   <p className="text-slate-500 font-mono text-xs mt-0.5">{form.tyre_size}</p>
+                </div>
+              )}
+
+              {/* Vehicle found from the reg plate search — shown for confirmation, not editable */}
+              {form.vehicle_registration && (
+                <div className="bg-slate-50 rounded-xl p-3.5 mb-4 text-sm">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 mb-1">Your vehicle</p>
+                  <p className="font-bold text-slate-800">
+                    <span className="inline-block bg-[#f5d100] text-slate-900 font-black font-mono text-xs tracking-[0.12em] px-2 py-0.5 rounded mr-2">{form.vehicle_registration}</span>
+                    {[form.vehicle_make, form.vehicle_model, form.vehicle_year].filter(Boolean).join(' ')}
+                  </p>
                 </div>
               )}
 

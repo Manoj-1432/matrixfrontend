@@ -102,6 +102,8 @@ function TyresInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vehicle, setVehicle] = useState<VehicleLookupResult['vehicle'] | null>(null);
+  // Reg plate the customer searched with — passed on to the booking so they don't type it again
+  const [vehicleReg, setVehicleReg] = useState<string | null>(null);
   const [tyres, setTyres] = useState<TyreResult[] | null>(null);
   const [likelySizes, setLikelySizes] = useState<string[]>([]);
   const [tyreNote, setTyreNote] = useState<string | null>(null);
@@ -124,6 +126,7 @@ function TyresInner() {
         try {
           const data = await api.post<VehicleLookupResult>('/api/vehicle/lookup', { registration_number: v });
           setVehicle(data.vehicle ?? null);
+          setVehicleReg(v.replace(/\s+/g, ''));
           setTyres(data.tyres ?? []);
           setLikelySizes(data.tyre?.likely_sizes ?? []);
           setTyreNote(data.tyre?.notes?.[0] ?? null);
@@ -139,10 +142,11 @@ function TyresInner() {
   async function searchByReg() {
     const v = reg.trim().replace(/\s+/g, '').toUpperCase();
     if (!v) return;
-    setLoading(true); setError(null); setTyres(null); setVehicle(null); setLikelySizes([]);
+    setLoading(true); setError(null); setTyres(null); setVehicle(null); setVehicleReg(null); setLikelySizes([]);
     try {
       const data = await api.post<VehicleLookupResult>('/api/vehicle/lookup', { registration_number: v });
       setVehicle(data.vehicle);
+      setVehicleReg(v);
       setTyres(data.tyres ?? []);
       setLikelySizes(data.tyre?.likely_sizes ?? []);
       if (data.tyre_error && !data.tyre_error.skipped) {
@@ -173,7 +177,7 @@ function TyresInner() {
   async function searchBySize() {
     if (!width || !ratio || !rim) { setError('Please select Width, Profile and Rim size.'); return; }
     const sizeLabel = `${width}/${ratio}R${rim}`;
-    setLoading(true); setError(null); setTyres(null); setVehicle(null); setLikelySizes([sizeLabel]);
+    setLoading(true); setError(null); setTyres(null); setVehicle(null); setVehicleReg(null); setLikelySizes([sizeLabel]);
     try {
       const data = await api.post<VehicleLookupResult>('/api/vehicle/lookup', {
         tyre_size: sizeLabel,
@@ -206,7 +210,16 @@ function TyresInner() {
     if (cart.length === 0) return;
     const first = cart[0];
     // Store full cart in localStorage for checkout to read
-    router.push(`/booking?tyre_id=${first.tyre.id}&tyre_brand=${encodeURIComponent(getBrandName(first.tyre))}&tyre_model=${encodeURIComponent(first.tyre.model)}&tyre_size=${encodeURIComponent(getSizeLabel(first.tyre))}&tyre_price=${getPrice(first.tyre)}&qty=${first.qty}&cart=1`);
+    // Vehicle details from the reg lookup (DVLA) go with the booking, so the customer never types them
+    let vehicleQuery = '';
+    if (vehicleReg) {
+      const v = new URLSearchParams({ vehicle_registration: vehicleReg });
+      if (vehicle?.make) v.set('vehicle_make', vehicle.make);
+      if (vehicle?.model) v.set('vehicle_model', vehicle.model);
+      if (vehicle?.yearOfManufacture) v.set('vehicle_year', String(vehicle.yearOfManufacture));
+      vehicleQuery = `&${v}`;
+    }
+    router.push(`/booking?tyre_id=${first.tyre.id}&tyre_brand=${encodeURIComponent(getBrandName(first.tyre))}&tyre_model=${encodeURIComponent(first.tyre.model)}&tyre_size=${encodeURIComponent(getSizeLabel(first.tyre))}&tyre_price=${getPrice(first.tyre)}&qty=${first.qty}&cart=1${vehicleQuery}`);
   }
 
   const SELECT = 'w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer';

@@ -77,6 +77,11 @@ function BookingInner() {
     if (tyreModel) p.set('tyre_model', tyreModel);
     if (tyreSize)  p.set('tyre_size', tyreSize);
     if (tyrePrice) p.set('tyre_price', tyrePrice);
+    // Pass on vehicle details found from the reg plate search (DVLA)
+    for (const k of ['vehicle_registration', 'vehicle_make', 'vehicle_model', 'vehicle_year']) {
+      const v = params.get(k);
+      if (v) p.set(k, v);
+    }
     router.push(`/checkout?${p}`);
   }
 
