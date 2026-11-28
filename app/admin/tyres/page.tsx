@@ -47,6 +47,17 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const INPUT = "w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white";
 
+/** Shown under a dropdown that has no options yet, pointing to where they're added. */
+function EmptyListHint({ href, what }: { href: string; what: string }) {
+  return (
+    <p className="text-xs text-amber-700 mt-1">
+      No {what} yet —{' '}
+      <a href={href} target="_blank" rel="noopener noreferrer" className="font-semibold underline">add them here</a>
+      , then reopen this form.
+    </p>
+  );
+}
+
 function TyreModal({
   title, form, setForm, brands, sizes, seasons, tyreTypes, fuels, speeds, onSave, onClose, saving,
   imageFile, setImageFile, currentImageUrl,
@@ -91,12 +102,14 @@ function TyreModal({
               <option value="">Any</option>
               {seasons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
+            {seasons.length === 0 && <EmptyListHint href="/admin/attributes/season" what="seasons" />}
           </Field>
           <Field label="Tyre Type">
             <select value={form.tyre_type_id} onChange={e => setForm({ ...form, tyre_type_id: e.target.value })} className={INPUT}>
               <option value="">Any</option>
               {tyreTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
+            {tyreTypes.length === 0 && <EmptyListHint href="/admin/attributes/tyre-type" what="tyre types" />}
           </Field>
           <Field label="Price (£) *">
             <input type="number" min="0" step="0.01" value={form.price}
@@ -114,6 +127,7 @@ function TyreModal({
               <option value="">—</option>
               {fuels.map(f => <option key={f.id} value={f.id}>{f.rating ?? f.name}</option>)}
             </select>
+            {fuels.length === 0 && <EmptyListHint href="/admin/attributes/fuel-efficiency" what="fuel efficiency ratings" />}
           </Field>
           <Field label="Wet Grip">
             <select value={form.wet_grip} onChange={e => setForm({ ...form, wet_grip: e.target.value })} className={INPUT}>
@@ -130,6 +144,7 @@ function TyreModal({
               <option value="">—</option>
               {speeds.map(s => <option key={s.id} value={s.id}>{s.rating ?? s.name}</option>)}
             </select>
+            {speeds.length === 0 && <EmptyListHint href="/admin/attributes/speed-rating" what="speed ratings" />}
           </Field>
           <Field label="Load Index">
             <input type="text" value={form.load_index} placeholder="e.g. 91 or 109/107"
