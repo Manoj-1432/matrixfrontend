@@ -31,7 +31,8 @@ function BookingInner() {
   const [selectedDate, setSelDate]  = useState<string | null>(null);
   const [selectedSlot, setSelSlot]  = useState<Slot | null>(null);
   const [loadingSlots, setLoadSlots]= useState(false);
-  const [qty, setQty]               = useState(1);
+  // Start from the quantity chosen in the tyre cart (was always reset to 1)
+  const [qty, setQty]               = useState(() => Math.max(1, Math.floor(Number(params.get('qty')) || 1)));
 
   useEffect(() => {
     const now = new Date();
@@ -127,7 +128,7 @@ function BookingInner() {
                 <label className="text-xs text-slate-500 font-medium">Qty:</label>
                 <select value={qty} onChange={e => setQty(Number(e.target.value))}
                   className="border border-slate-200 rounded-lg px-2 py-1 text-sm font-bold text-slate-700 outline-none focus:border-blue-400">
-                  {[1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
+                  {Array.from({ length: Math.max(4, qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>

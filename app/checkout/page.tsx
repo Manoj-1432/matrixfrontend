@@ -286,7 +286,7 @@ function CheckoutInner() {
                   <label className={LABEL}>Quantity *</label>
                   <select value={form.tyre_quantity} onChange={e => set('tyre_quantity', e.target.value)}
                     className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 bg-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50 transition-all cursor-pointer">
-                    {[1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
+                    {Array.from({ length: Math.max(4, qty) }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
                 <div>
