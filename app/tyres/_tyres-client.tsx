@@ -1,119 +1,14 @@
 'use client';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useMemo, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { api, type TyreResult, type VehicleLookupResult, type SearchOptions } from '@/lib/api';
+import { api, type TyreResult, type VehicleLookupResult, type SearchOptions, type CheckoutConfig } from '@/lib/api';
 import ScrollToTop from '@/components/ScrollToTop';
 import { addToCart, getCart, updateQty, removeFromCart, clearCart, cartTotal, type CartItem } from '@/lib/cart';
 import { encodeBookingItems } from '@/lib/bookingItems';
+import { TyreListItem, TyreFilterBar, applyTyreFilters, NO_FILTERS, resolveImageUrl, getBrandName, getSizeLabel, type TyreFilters } from './_tyre-list';
 
 const PHONE = '07721570075';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
-
-function resolveImageUrl(url?: string | null): string | null {
-  if (!url) return null;
-  // If it's already a full URL from a different host, use it directly
-  if (url.startsWith('http') && !url.includes('localhost')) return url;
-  // Strip any wrong origin and re-attach the correct API base
-  const path = url.startsWith('http') ? new URL(url).pathname : url;
-  return `${API_BASE}${path}`;
-}
-
-function getBrandName(t: TyreResult) {
-  return t.brand_name ?? t.brand ?? '—';
-}
-function getSizeLabel(t: TyreResult) {
-  return t.size_label ?? t.size ?? '—';
-}
-function getPrice(t: TyreResult) {
-  return Number(t.price).toFixed(2);
-}
-
-const QTY_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8];
-
-function TyreCard({ t, onAdd, onQtyChange, cartQty }: {
-  t: TyreResult;
-  onAdd: (t: TyreResult, qty: number) => void;
-  onQtyChange: (tyreId: number, qty: number) => void;
-  cartQty: number; // 0 = not in cart
-}) {
-  const imgSrc = resolveImageUrl(t.image_url);
-  const inCart = cartQty > 0;
-  // Quantity chosen before adding; once in the cart the select edits the cart directly
-  const [pickQty, setPickQty] = useState(1);
-  const qty = inCart ? cartQty : pickQty;
-  // Hide the picture if it can't be loaded (e.g. an old upload that no longer exists)
-  const [imgFailed, setImgFailed] = useState(false);
-  return (
-    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-slate-200/60 hover:-translate-y-1 transition-all duration-200">
-      {imgSrc && !imgFailed && (
-        <div className="w-full h-40 bg-slate-50 overflow-hidden">
-          <img src={imgSrc} alt={t.model} className="w-full h-full object-cover" onError={() => setImgFailed(true)} />
-        </div>
-      )}
-      <div className="p-5 flex flex-col gap-4 flex-1">
-      <div>
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <span className="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
-            {getBrandName(t)}
-          </span>
-          {t.season_name && (
-            <span className="text-xs text-slate-500 font-medium capitalize">{t.season_name}</span>
-          )}
-        </div>
-        <h3 className="font-bold text-slate-900 text-base leading-tight mt-2">{t.model}</h3>
-        <p className="text-slate-500 text-sm mt-0.5 font-mono">{getSizeLabel(t)}</p>
-        {t.tyre_type_name && (
-          <p className="text-xs text-slate-400 mt-1 capitalize">{t.tyre_type_name}</p>
-        )}
-      </div>
-      {(t.fuel_efficiency?.rating || t.speed_rating?.rating) && (
-        <div className="flex gap-2 flex-wrap">
-          {t.speed_rating?.rating && (
-            <span className="text-xs bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-md">
-              Speed: {t.speed_rating.rating}
-            </span>
-          )}
-          {t.fuel_efficiency?.rating && (
-            <span className="text-xs bg-green-50 text-green-700 font-semibold px-2 py-0.5 rounded-md">
-              Fuel: {t.fuel_efficiency.rating}
-            </span>
-          )}
-        </div>
-      )}
-      <div className="pt-3 border-t border-slate-100 mt-auto flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <label htmlFor={`qty-${t.id}`} className="text-xs font-bold uppercase tracking-widest text-slate-500">Quantity</label>
-        <select id={`qty-${t.id}`} value={qty}
-          onChange={e => {
-            const n = Number(e.target.value);
-            if (inCart) onQtyChange(t.id, n); else setPickQty(n);
-          }}
-          className="border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-800 bg-white outline-none focus:border-blue-400 cursor-pointer">
-          {(QTY_OPTIONS.includes(qty) ? QTY_OPTIONS : [...QTY_OPTIONS, qty]).map(n => (
-            <option key={n} value={n}>{n} {n === 1 ? 'tyre' : 'tyres'}</option>
-          ))}
-        </select>
-      </div>
-      <div className="flex items-center justify-between">
-        <div>
-          <span className="text-2xl font-black text-slate-900">£{getPrice(t)}</span>
-          <span className="text-xs text-slate-400 ml-1">per tyre</span>
-          {qty > 1 && <p className="text-xs text-slate-500 mt-0.5">£{(Number(t.price) * qty).toFixed(2)} for {qty}</p>}
-        </div>
-        <button
-          onClick={() => { if (!inCart) onAdd(t, pickQty); }}
-          className={`text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${inCart ? 'bg-green-600 text-white' : 'text-white'}`}
-          style={inCart ? {} : { background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
-          {inCart ? '✓ Added' : 'Add to Cart'}
-        </button>
-      </div>
-      </div>
-      </div>
-    </div>
-  );
-}
 
 function TyresInner() {
   const params = useSearchParams();
@@ -137,10 +32,21 @@ function TyresInner() {
   const [tyres, setTyres] = useState<TyreResult[] | null>(null);
   const [likelySizes, setLikelySizes] = useState<string[]>([]);
   const [tyreNote, setTyreNote] = useState<string | null>(null);
+  // Earliest fitting date (from booking settings), shown on each tyre as "Fit from"
+  const [fitFrom, setFitFrom] = useState<string | null>(null);
+
+  // Sort/filter choices belong to one set of results; a new search starts unfiltered
+  const [filterState, setFilterState] = useState<{ list: TyreResult[] | null; f: TyreFilters }>({ list: null, f: NO_FILTERS });
+  const filters = filterState.list === tyres ? filterState.f : NO_FILTERS;
+  const setFilters = (f: TyreFilters) => setFilterState({ list: tyres, f });
+  const shownTyres = useMemo(() => (tyres ? applyTyreFilters(tyres, filters) : []), [tyres, filters]);
 
   useEffect(() => {
     api.get<SearchOptions>('/api/public/tyre-search-options')
       .then(setOptions)
+      .catch(() => null);
+    api.get<CheckoutConfig>('/api/public/checkout-config')
+      .then(c => setFitFrom(c.min_fitting_date ?? null))
       .catch(() => null);
   }, []);
 
@@ -423,7 +329,9 @@ function TyresInner() {
           <>
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-slate-900 text-lg">
-                {tyres.length > 0 ? `${tyres.length} tyre${tyres.length !== 1 ? 's' : ''} found` : 'No tyres found'}
+                {tyres.length === 0 ? 'No tyres found'
+                  : shownTyres.length === tyres.length ? `${tyres.length} tyre${tyres.length !== 1 ? 's' : ''} found`
+                  : `Showing ${shownTyres.length} of ${tyres.length} tyres`}
               </h2>
             </div>
 
@@ -448,12 +356,23 @@ function TyresInner() {
                 </div>
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {tyres.map(t => (
-                  <TyreCard key={t.id} t={t} onAdd={handleAdd} onQtyChange={handleCartQty}
-                    cartQty={cart.find(c => c.tyre.id === t.id)?.qty ?? 0} />
-                ))}
-              </div>
+              <>
+                <TyreFilterBar tyres={tyres} filters={filters} setFilters={setFilters} />
+                {shownTyres.length === 0 ? (
+                  <div className="text-center py-12 bg-white rounded-2xl border border-slate-100">
+                    <p className="text-slate-700 font-bold mb-1">No tyres match these filters</p>
+                    <button type="button" onClick={() => setFilters({ ...NO_FILTERS, sort: filters.sort })}
+                      className="text-sm font-semibold text-blue-700 hover:underline">Clear filters</button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {shownTyres.map(t => (
+                      <TyreListItem key={t.id} t={t} fitFrom={fitFrom} onAdd={handleAdd} onQtyChange={handleCartQty}
+                        cartQty={cart.find(c => c.tyre.id === t.id)?.qty ?? 0} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

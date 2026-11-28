@@ -8,22 +8,30 @@ type Tyre = {
   model: string; size_id: number; size_label?: string;
   season_id?: number | null; season_name?: string;
   tyre_type_id?: number | null; tyre_type_name?: string;
+  fuel_efficiency_id?: number | null; speed_rating_id?: number | null;
+  wet_grip?: string | null; noise_db?: number | null; load_index?: string | null; run_flat?: boolean;
   price: number; stock: number; description?: string;
   status: boolean; image_url?: string;
 };
 
-type Attr = { id: number; name?: string; label?: string };
+type Attr = { id: number; name?: string; label?: string; rating?: string };
 
 type FormData = {
   brand_id: string; model: string; size_id: string;
   season_id: string; tyre_type_id: string;
+  fuel_efficiency_id: string; speed_rating_id: string;
+  wet_grip: string; noise_db: string; load_index: string; run_flat: string;
   price: string; stock: string; description: string; status: string;
 };
 
 const BLANK: FormData = {
   brand_id: '', model: '', size_id: '', season_id: '',
-  tyre_type_id: '', price: '', stock: '0', description: '', status: 'active',
+  tyre_type_id: '', fuel_efficiency_id: '', speed_rating_id: '',
+  wet_grip: '', noise_db: '', load_index: '', run_flat: '0',
+  price: '', stock: '0', description: '', status: 'active',
 };
+
+const GRADES = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
 const STATUS_BADGE = 'bg-green-50 text-green-700 border-green-200';
 const STATUS_BADGE_OFF = 'bg-slate-100 text-slate-500 border-slate-200';
@@ -40,11 +48,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 const INPUT = "w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white";
 
 function TyreModal({
-  title, form, setForm, brands, sizes, seasons, tyreTypes, onSave, onClose, saving,
+  title, form, setForm, brands, sizes, seasons, tyreTypes, fuels, speeds, onSave, onClose, saving,
   imageFile, setImageFile, currentImageUrl,
 }: {
   title: string; form: FormData; setForm: (f: FormData) => void;
-  brands: Attr[]; sizes: Attr[]; seasons: Attr[]; tyreTypes: Attr[];
+  brands: Attr[]; sizes: Attr[]; seasons: Attr[]; tyreTypes: Attr[]; fuels: Attr[]; speeds: Attr[];
   onSave: () => void; onClose: () => void; saving: boolean;
   imageFile: File | null; setImageFile: (f: File | null) => void;
   currentImageUrl?: string;
@@ -97,6 +105,41 @@ function TyreModal({
           <Field label="Stock *">
             <input type="number" min="0" step="1" value={form.stock}
               onChange={e => setForm({ ...form, stock: e.target.value })} className={INPUT} />
+          </Field>
+
+          {/* EU tyre label + extra details — shown in the customer tyre listing and filters */}
+          <p className="col-span-2 text-xs font-bold text-blue-600 uppercase tracking-widest mt-2 -mb-1">EU label &amp; details (optional)</p>
+          <Field label="Fuel Efficiency">
+            <select value={form.fuel_efficiency_id} onChange={e => setForm({ ...form, fuel_efficiency_id: e.target.value })} className={INPUT}>
+              <option value="">—</option>
+              {fuels.map(f => <option key={f.id} value={f.id}>{f.rating ?? f.name}</option>)}
+            </select>
+          </Field>
+          <Field label="Wet Grip">
+            <select value={form.wet_grip} onChange={e => setForm({ ...form, wet_grip: e.target.value })} className={INPUT}>
+              <option value="">—</option>
+              {GRADES.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+          </Field>
+          <Field label="Road Noise (dB)">
+            <input type="number" min="40" max="99" step="1" value={form.noise_db} placeholder="e.g. 70"
+              onChange={e => setForm({ ...form, noise_db: e.target.value })} className={INPUT} />
+          </Field>
+          <Field label="Speed Rating">
+            <select value={form.speed_rating_id} onChange={e => setForm({ ...form, speed_rating_id: e.target.value })} className={INPUT}>
+              <option value="">—</option>
+              {speeds.map(s => <option key={s.id} value={s.id}>{s.rating ?? s.name}</option>)}
+            </select>
+          </Field>
+          <Field label="Load Index">
+            <input type="text" value={form.load_index} placeholder="e.g. 91 or 109/107"
+              onChange={e => setForm({ ...form, load_index: e.target.value.replace(/[^0-9/]/g, '') })} className={INPUT} />
+          </Field>
+          <Field label="Run-Flat">
+            <select value={form.run_flat} onChange={e => setForm({ ...form, run_flat: e.target.value })} className={INPUT}>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
           </Field>
           <div className="col-span-2">
             <Field label="Description">
@@ -157,6 +200,8 @@ export default function TyresPage() {
   const [sizes, setSizes] = useState<Attr[]>([]);
   const [seasons, setSeasons] = useState<Attr[]>([]);
   const [tyreTypes, setTyreTypes] = useState<Attr[]>([]);
+  const [fuels, setFuels] = useState<Attr[]>([]);
+  const [speeds, setSpeeds] = useState<Attr[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [form, setForm] = useState<FormData | null>(null);
@@ -182,6 +227,11 @@ export default function TyresPage() {
       setTyreTypes(tt.tyre_types ?? []);
     }).catch(() => router.push('/admin/login'))
       .finally(() => setLoading(false));
+    // Lists for the fuel efficiency and speed rating dropdowns
+    adminApi.get<{ fuel_efficiencies: Attr[] }>('/api/admin/attributes/fuel-efficiency')
+      .then(d => setFuels(d.fuel_efficiencies ?? [])).catch(() => null);
+    adminApi.get<{ speed_ratings: Attr[] }>('/api/admin/attributes/speed-rating')
+      .then(d => setSpeeds(d.speed_ratings ?? [])).catch(() => null);
   }, [router]);
 
   function showMsg(text: string, ok = true) {
@@ -205,6 +255,12 @@ export default function TyresPage() {
       size_id: String(t.size_id),
       season_id: t.season_id ? String(t.season_id) : '',
       tyre_type_id: t.tyre_type_id ? String(t.tyre_type_id) : '',
+      fuel_efficiency_id: t.fuel_efficiency_id ? String(t.fuel_efficiency_id) : '',
+      speed_rating_id: t.speed_rating_id ? String(t.speed_rating_id) : '',
+      wet_grip: t.wet_grip ?? '',
+      noise_db: t.noise_db != null ? String(t.noise_db) : '',
+      load_index: t.load_index ?? '',
+      run_flat: t.run_flat ? '1' : '0',
       price: String(t.price), stock: String(t.stock),
       description: t.description ?? '',
       status: t.status ? 'active' : 'inactive',
@@ -218,6 +274,12 @@ export default function TyresPage() {
       size_id: Number(f.size_id),
       season_id: f.season_id ? Number(f.season_id) : null,
       tyre_type_id: f.tyre_type_id ? Number(f.tyre_type_id) : null,
+      fuel_efficiency_id: f.fuel_efficiency_id ? Number(f.fuel_efficiency_id) : null,
+      speed_rating_id: f.speed_rating_id ? Number(f.speed_rating_id) : null,
+      wet_grip: f.wet_grip || null,
+      noise_db: f.noise_db ? parseInt(f.noise_db) : null,
+      load_index: f.load_index || null,
+      run_flat: f.run_flat === '1',
       price: parseFloat(f.price),
       stock: parseInt(f.stock),
       description: f.description || null,
@@ -232,6 +294,12 @@ export default function TyresPage() {
     fd.append('size_id', f.size_id);
     if (f.season_id) fd.append('season_id', f.season_id);
     if (f.tyre_type_id) fd.append('tyre_type_id', f.tyre_type_id);
+    if (f.fuel_efficiency_id) fd.append('fuel_efficiency_id', f.fuel_efficiency_id);
+    if (f.speed_rating_id) fd.append('speed_rating_id', f.speed_rating_id);
+    fd.append('wet_grip', f.wet_grip);
+    fd.append('noise_db', f.noise_db);
+    fd.append('load_index', f.load_index);
+    fd.append('run_flat', f.run_flat);
     fd.append('price', f.price);
     fd.append('stock', f.stock);
     if (f.description) fd.append('description', f.description);
@@ -380,7 +448,7 @@ export default function TyresPage() {
         <TyreModal
           title={editingId ? 'Edit Tyre' : 'Add New Tyre'}
           form={form} setForm={setForm}
-          brands={brands} sizes={sizes} seasons={seasons} tyreTypes={tyreTypes}
+          brands={brands} sizes={sizes} seasons={seasons} tyreTypes={tyreTypes} fuels={fuels} speeds={speeds}
           onSave={handleSave} onClose={() => { setForm(null); setImageFile(null); }} saving={saving}
           imageFile={imageFile} setImageFile={setImageFile} currentImageUrl={editingImageUrl}
         />

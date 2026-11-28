@@ -64,6 +64,12 @@ export type TyreResult = {
   description?: string;
   fuel_efficiency?: { rating: string } | null;
   speed_rating?: { rating: string } | null;
+  /** EU label wet grip class (A–G) */
+  wet_grip?: string | null;
+  /** EU label external rolling noise in dB */
+  noise_db?: number | null;
+  load_index?: string | null;
+  run_flat?: boolean;
   image_url?: string | null;
 };
 
